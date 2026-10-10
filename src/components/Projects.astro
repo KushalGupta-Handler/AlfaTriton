@@ -1,0 +1,130 @@
+---
+import { Image } from 'astro:assets';
+import Photo from './Photo.astro';
+import Icon from './Icon.astro';
+import NeedsUpdate from './NeedsUpdate.astro';
+import before from '../assets/photos/machine-before.jpg';
+import after from '../assets/photos/machine-after.jpg';
+import staircase from '../assets/photos/staircase-cad.jpg';
+import guillotine from '../assets/photos/guillotine-cad.jpg';
+import transition from '../assets/photos/transition-pipe-cad.jpg';
+import rolls from '../assets/photos/drive-rolls.jpg';
+import pipework from '../assets/photos/stainless-pipework.jpg';
+import gear from '../assets/photos/splined-shaft.jpg';
+
+const projects = [
+  { img: rolls, tag: 'Printing & Packaging', title: 'Drive rolls & roller shafts', brief: 'Batch of knurled drive rolls machined from 4140 steel to drawing, with matching roller shafts.', service: 'CNC Machining' },
+  { img: gear, tag: 'Gear Cutting', title: 'Splined shaft replacement', brief: 'Worn splined shaft reverse-engineered from the sample and machined as a drop-in replacement.', service: 'Reverse Engineering' },
+  { img: pipework, tag: 'Food & Beverage', title: 'Stainless process pipework', brief: 'TIG-welded stainless pipework fabricated and finished for a production line.', service: 'Stainless Fabrication' },
+  { img: guillotine, tag: 'Machine Design', title: 'Heavy-duty guillotine', brief: 'Redesigned for more strength and rigidity, with screw-fixed parts to minimise weld distortion.', service: 'Machine Design' },
+  { img: transition, tag: 'Fabrication', title: 'Round-to-square transition', brief: 'Modelled in CAD, laser cut and rolled, then welded into a precise round-to-square transition.', service: 'Sheet Metal' },
+  { img: staircase, tag: 'Design & Fabrication', title: 'Double-helix staircase', brief: 'Designed in SolidWorks with files sent direct to laser and rolling for an exact fit on site.', service: 'CAD & Fabrication' },
+];
+---
+<section class="section" id="projects" aria-labelledby="projects-title">
+  <div class="container">
+    <header class="section-head reveal">
+      <p class="eyebrow">Recent work</p>
+      <h2 id="projects-title">Proof, not <span class="accent">promises</span></h2>
+      <p>A selection of jobs from our workshop. Every project starts with the same thing: listening to the problem.</p>
+    </header>
+
+    <article class="feature reveal">
+      <div class="ba" data-ba style="--pos: 50%">
+        <span class="img-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M3 7h3l2-3h8l2 3h3v13H3z"/><circle cx="12" cy="13" r="4"/></svg>
+          Higher-res photos · update from Oliver
+        </span>
+        <Image src={after} alt="Industrial machine after full restoration by Alfa Triton" widths={[400, 600]} sizes="(min-width: 1024px) 560px, 100vw" class="ba__img" format="webp" />
+        <div class="ba__before">
+          <Image src={before} alt="The same machine before restoration" widths={[400, 600]} sizes="(min-width: 1024px) 560px, 100vw" class="ba__img" format="webp" />
+        </div>
+        <span class="ba__label ba__label--l">Before</span>
+        <span class="ba__label ba__label--r">After</span>
+        <span class="ba__handle" aria-hidden="true"><Icon name="arrow" /></span>
+        <input class="ba__range" type="range" min="0" max="100" value="50" aria-label="Drag to compare before and after restoration" data-ba-range />
+      </div>
+      <div class="feature__body">
+        <p class="feature__tag">Restore &amp; Refurbish</p>
+        <h3>Old machine. <span class="accent">New life.</span></h3>
+        <p>We take in tired machines and restore them from the ground up — stripped, re-machined, rebuilt and re-commissioned. Often a fraction of the cost and lead time of buying new.</p>
+        <dl class="feature__facts">
+          <div><dt>Scope</dt><dd>Strip-down, re-machining, rebuild, paint, commissioning</dd></div>
+          <div><dt>Client / industry</dt><dd><NeedsUpdate note="client & industry" /></dd></div>
+          <div><dt>Turnaround</dt><dd><NeedsUpdate note="weeks" /></dd></div>
+        </dl>
+        <a href="#quote" class="btn" data-service="Machine design / rebuild">Quote a rebuild <Icon name="arrow" /></a>
+      </div>
+    </article>
+  </div>
+
+  <div class="proj-scroller" data-scroller>
+    <ul class="proj" role="list">
+      {projects.map((p, i) => (
+        <li class="proj__card reveal" style={`--d:${(i % 3) * 0.08}s`}>
+          <Photo src={p.img} alt={`${p.title} — ${p.service} by Alfa Triton`} class="proj__img" widths={[400, 640]} sizes="(min-width: 1024px) 380px, 80vw" />
+          <div class="proj__body">
+            <p class="proj__tag">{p.tag}</p>
+            <h3>{p.title}</h3>
+            <p>{p.brief}</p>
+            <p class="proj__result"><strong>Result:</strong> <NeedsUpdate note="outcome / client" /></p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+  <div class="container proj__more reveal">
+    <p>Have a similar job? <a href="#quote" class="link-arrow">Send us the details <Icon name="arrow" /></a></p>
+  </div>
+</section>
+
+<style>
+  .feature { display: grid; gap: 24px; margin-bottom: clamp(40px, 7vw, 72px); background: var(--char-900); color: var(--text-inv); border-radius: var(--radius-lg); overflow: hidden; }
+  @media (min-width: 900px) { .feature { grid-template-columns: 1.05fr 1fr; gap: 0; align-items: stretch; } }
+  .feature__body { padding: 4px 22px 28px; }
+  @media (min-width: 900px) { .feature__body { padding: 48px; align-self: center; } }
+  .feature__tag { font-family: var(--font-display); letter-spacing: 0.24em; text-transform: uppercase; color: var(--blue-300); font-weight: 600; margin-bottom: 8px; }
+  .feature h3 { font-size: clamp(2rem, 6vw, 3rem); }
+  .feature p { color: var(--text-inv-muted); }
+  .feature__facts { display: grid; gap: 10px; margin: 18px 0 26px; padding: 16px 0; border-block: 1px solid rgba(255,255,255,0.1); font-size: 0.9rem; }
+  .feature__facts div { display: grid; grid-template-columns: 120px 1fr; gap: 12px; }
+  .feature__facts dt { color: var(--steel-400); }
+  .feature__facts dd { margin: 0; color: var(--white); }
+
+  /* Before / after */
+  .ba { position: relative; aspect-ratio: 3 / 4; max-height: 640px; overflow: hidden; user-select: none; background: var(--char-700); touch-action: pan-y; }
+  @media (min-width: 900px) { .ba { aspect-ratio: auto; min-height: 560px; } }
+  .ba :global(.ba__img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .ba__before { position: absolute; inset: 0; clip-path: inset(0 calc(100% - var(--pos)) 0 0); }
+  .ba__before :global(.ba__img) { filter: sepia(0.25) saturate(0.8); }
+  .ba::after { content: ''; position: absolute; top: 0; bottom: 0; left: var(--pos); width: 2px; margin-left: -1px; background: var(--white); box-shadow: 0 0 12px rgba(0,0,0,0.5); pointer-events: none; }
+  .ba__handle { position: absolute; top: 50%; left: var(--pos); z-index: 2; width: 48px; height: 48px; margin: -24px 0 0 -24px; border-radius: 50%; display: grid; place-items: center; background: var(--white); color: var(--blue-600); box-shadow: var(--shadow-2); pointer-events: none; }
+  .ba__handle :global(svg) { width: 22px; height: 22px; }
+  .ba__handle::before { content: ''; position: absolute; inset: -6px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.5); animation: ping 2.2s var(--ease) infinite; }
+  .ba__label { position: absolute; bottom: 14px; z-index: 2; font: 700 0.8rem/1 var(--font-body); letter-spacing: 0.14em; text-transform: uppercase; padding: 7px 10px; border-radius: 4px; background: rgba(11,12,14,0.75); color: var(--white); }
+  .ba__label--l { left: 14px; }
+  .ba__label--r { right: 14px; background: var(--blue-600); }
+  .ba__range { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: ew-resize; margin: 0; z-index: 3; }
+
+  /* Project cards */
+  .proj-scroller { overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; scroll-padding-inline: var(--gutter); }
+  .proj-scroller::-webkit-scrollbar { display: none; }
+  .proj { display: grid; grid-auto-flow: column; grid-auto-columns: 80%; gap: 14px; list-style: none; margin: 0; padding: 4px var(--gutter) 16px; }
+  @media (min-width: 640px) { .proj { grid-auto-columns: 46%; } }
+  .proj__card { scroll-snap-align: start; border-radius: var(--radius); overflow: hidden; background: var(--steel-100); border: 1px solid var(--steel-200); display: flex; flex-direction: column; }
+  .proj__card :global(.proj__img) { aspect-ratio: 4 / 3; background: var(--white); }
+  .proj__card :global(.proj__img img) { transition: transform 0.8s var(--ease); }
+  .proj__card:hover :global(.proj__img img) { transform: scale(1.05); }
+  .proj__body { padding: 18px 18px 20px; }
+  .proj__tag { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--blue-600); margin-bottom: 6px; }
+  .proj__body h3 { font-size: 1.45rem; margin-bottom: 6px; }
+  .proj__body p { font-size: 0.92rem; color: var(--text-muted); margin-bottom: 10px; }
+  .proj__result { margin: 0 !important; font-size: 0.85rem !important; }
+  .proj__more { margin-top: 18px; }
+  .proj__more p { margin: 0; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+  @media (min-width: 1024px) {
+    .proj-scroller { overflow: visible; max-width: var(--maxw); margin-inline: auto; padding-inline: var(--gutter); }
+    .proj { grid-auto-flow: row; grid-template-columns: repeat(3, 1fr); grid-auto-columns: auto; gap: 24px; padding: 0; }
+  }
+</style>

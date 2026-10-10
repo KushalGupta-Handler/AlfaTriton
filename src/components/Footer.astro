@@ -1,0 +1,89 @@
+---
+import logoLight from '../assets/brand/logo-light.svg?url';
+import Icon from './Icon.astro';
+import NeedsUpdate from './NeedsUpdate.astro';
+import { site, services } from '../data/site';
+const year = new Date().getFullYear();
+---
+<section class="cta-band on-dark" aria-label="Get in touch">
+  <div class="container cta-band__inner">
+    <h2>Need it fixed, made or <span class="accent">built?</span></h2>
+    <div class="btn-row">
+      <a class="btn" href="/#quote">Get a fast quote <Icon name="arrow" /></a>
+      <a class="btn btn--ghost" href={`tel:${site.phone.tel}`}><Icon name="phone" /> {site.phone.display}</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer on-dark">
+  <div class="container footer__grid">
+    <div class="footer__brand">
+      <img src={logoLight} alt={site.name} width="220" height="43" loading="lazy" />
+      <p>Precision engineering, fabrication and 24/7 breakdown support for Australian manufacturers since {site.founded}.</p>
+      <p class="footer__legal">{site.name} is a trading name of {site.legalName}. {site.abn.value} <NeedsUpdate note="ABN" /></p>
+    </div>
+    <nav aria-label="Services">
+      <h3>Services</h3>
+      <ul role="list">{services.map((s) => <li><a href={`/#service-${s.id}`}>{s.title}</a></li>)}</ul>
+    </nav>
+    <div>
+      <h3>Contact</h3>
+      <ul role="list" class="footer__contact">
+        <li><a href={`tel:${site.phone.tel}`}><Icon name="phone" />{site.phone.display}</a></li>
+        <li><a href={`tel:${site.afterHours.tel}`}><Icon name="bolt" />24/7: {site.afterHours.display}</a></li>
+        <li><a href={`mailto:${site.email.address}`}><Icon name="mail" />{site.email.address}</a></li>
+        <li><a href={site.address.mapsUrl} target="_blank" rel="noopener"><Icon name="pin" />{site.address.street}, {site.address.locality} {site.address.region} {site.address.postcode}</a></li>
+      </ul>
+      <p class="footer__social">LinkedIn · Instagram · Google <NeedsUpdate note="social links" /></p>
+    </div>
+  </div>
+  <div class="container footer__bottom">
+    <span>© {year} {site.name}. Australian owned &amp; operated.</span>
+    <span><a href="/privacy/">Privacy</a></span>
+  </div>
+</footer>
+
+<nav class="mobilebar" aria-label="Quick actions">
+  <a href={`tel:${site.afterHours.tel}`} class="mobilebar__call"><span class="live-dot" aria-hidden="true"></span><span><small>24/7 breakdown</small>Call now</span></a>
+  <a href="/#quote" class="mobilebar__quote">Get a quote <Icon name="arrow" /></a>
+</nav>
+
+<style>
+  .cta-band { background: var(--grad-blue); color: var(--white); padding-block: clamp(48px, 9vw, 88px); position: relative; overflow: hidden; }
+  .cta-band::before { content: ''; position: absolute; right: -120px; top: -60px; width: 420px; height: 420px; background: rgba(255,255,255,0.08); clip-path: polygon(30% 0, 70% 0, 100% 100%, 0 100%); }
+  .cta-band__inner { position: relative; display: grid; gap: 24px; }
+  @media (min-width: 900px) { .cta-band__inner { grid-template-columns: 1fr auto; align-items: center; } }
+  .cta-band h2 { font-size: var(--fs-h2); margin: 0; }
+  .cta-band .accent { color: var(--ink); }
+  .cta-band .btn:not(.btn--ghost) { --btn-bg: var(--ink); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+  .cta-band .btn { flex: 1 1 200px; }
+
+  .footer { background: var(--ink); color: var(--text-inv-muted); padding-top: 56px; font-size: 0.92rem; }
+  .footer__grid { display: grid; gap: 36px; padding-bottom: 40px; }
+  @media (min-width: 900px) { .footer__grid { grid-template-columns: 1.3fr 1fr 1fr; gap: 48px; } }
+  .footer__brand img { width: 200px; margin-bottom: 16px; }
+  .footer__legal { font-size: 0.8rem; }
+  .footer h3 { font-size: 1.1rem; letter-spacing: 0.14em; color: var(--white); margin-bottom: 14px; }
+  .footer ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+  .footer a { text-decoration: none; transition: color 0.2s; }
+  .footer a:hover { color: var(--white); }
+  .footer__contact a { display: inline-flex; gap: 10px; align-items: flex-start; }
+  .footer__contact :global(svg) { width: 18px; height: 18px; color: var(--blue-400); flex: none; margin-top: 2px; }
+  .footer__social { margin-top: 18px; }
+  .footer__bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; padding-block: 20px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.8rem; }
+
+  .mobilebar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 90; display: grid; grid-template-columns: 1fr 1.15fr; gap: 8px;
+    padding: 8px 10px calc(8px + env(safe-area-inset-bottom)); height: auto; min-height: var(--mobilebar-h);
+    background: rgba(11,12,14,0.94); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border-top: 1px solid rgba(255,255,255,0.1);
+    transform: translateY(110%); transition: transform 0.35s var(--ease);
+  }
+  .mobilebar.is-visible { transform: none; }
+  .mobilebar a { display: flex; align-items: center; justify-content: center; gap: 10px; border-radius: var(--radius-sm); text-decoration: none; min-height: 52px; font-family: var(--font-display); font-weight: 700; font-size: 1.08rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  .mobilebar__call { background: rgba(255,176,32,0.12); color: var(--urgent); border: 1px solid rgba(255,176,32,0.45); }
+  .mobilebar__call small { display: block; font-family: var(--font-body); font-size: 0.62rem; font-weight: 600; letter-spacing: 0.08em; color: var(--text-inv-muted); line-height: 1.1; }
+  .mobilebar__call > span:last-child { line-height: 1.05; text-align: left; }
+  .mobilebar__quote { background: var(--grad-blue); color: var(--white); }
+  .mobilebar__quote :global(svg) { width: 18px; height: 18px; }
+  @media (min-width: 1024px) { .mobilebar { display: none; } }
+</style>

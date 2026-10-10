@@ -1,0 +1,43 @@
+---
+import Icon from './Icon.astro';
+// PLACEHOLDERS ONLY — replace with real, attributable quotes from Oliver's clients
+// (with permission) before launch. Do not publish invented testimonials.
+const items = [
+  { role: 'Maintenance Manager', co: 'Food & beverage manufacturer' },
+  { role: 'Plant Engineer', co: 'Pharmaceutical manufacturer' },
+  { role: 'Operations Manager', co: 'Packaging / printing business' },
+];
+---
+<section class="section section--steel" id="testimonials" aria-labelledby="t-title">
+  <div class="container">
+    <header class="section-head section-head--center reveal">
+      <p class="eyebrow">Client feedback</p>
+      <h2 id="t-title">What our <span class="accent">clients say</span></h2>
+      <p><span class="nu">[Need update from Oliver: 3 real client quotes with name, role &amp; company — permission to publish]</span></p>
+    </header>
+    <ul class="quotes" role="list">
+      {items.map((t, i) => (
+        <li class="quote reveal" style={`--d:${i * 0.1}s`}>
+          <Icon name="quote" class="quote__mark" />
+          <blockquote>
+            <p>“Client testimonial goes here — ideally a specific story: what broke, how fast Alfa Triton responded, and the result.”</p>
+          </blockquote>
+          <p class="quote__by"><strong>[Name]</strong><span>{t.role} · {t.co}</span></p>
+        </li>
+      ))}
+    </ul>
+    <p class="quotes__google reveal"><span class="nu">[Need update from Oliver: Google Business Profile link — we can show live star rating here]</span></p>
+  </div>
+</section>
+
+<style>
+  .quotes { list-style: none; padding: 0; margin: 0; display: grid; gap: 16px; }
+  @media (min-width: 900px) { .quotes { grid-template-columns: repeat(3, 1fr); gap: 24px; } }
+  .quote { background: var(--white); border: 1px dashed var(--steel-300); border-radius: var(--radius); padding: 26px 22px; position: relative; }
+  .quote :global(.quote__mark) { width: 36px; height: 36px; color: var(--blue-400); margin-bottom: 10px; }
+  .quote blockquote { margin: 0; }
+  .quote blockquote p { color: var(--steel-500); font-style: italic; }
+  .quote__by { margin: 0; display: grid; font-size: 0.88rem; color: var(--text-muted); }
+  .quote__by strong { color: var(--text); }
+  .quotes__google { text-align: center; margin-top: 24px; }
+</style>

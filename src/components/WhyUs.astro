@@ -1,0 +1,68 @@
+---
+import Photo from './Photo.astro';
+import Icon from './Icon.astro';
+import NeedsUpdate from './NeedsUpdate.astro';
+import mazak from '../assets/photos/mazak-lathe.jpg';
+import drawing from '../assets/photos/cad-drawing-coupling.jpg';
+import { site, yearsInBusiness } from '../data/site';
+
+const reasons = [
+  { icon: 'clock', t: '24/7, 365', d: 'Breakdowns don\'t keep office hours. Neither do we — the workshop opens out of hours for emergency work.' },
+  { icon: 'wrench', t: 'All in-house', d: 'CAD, machining, gear cutting, fabrication and welding under one roof. Faster turnaround, tighter control.' },
+  { icon: 'shield', t: '12-month warranty', d: 'Every Alfa Triton product is guaranteed for 12 months and tested to Australian Standards.' },
+  { icon: 'flag', t: `${yearsInBusiness} years strong`, d: `Australian owned and operated since ${site.founded}. Loyal staff, trade experience and a reputation for quality.` },
+];
+---
+<section class="section section--dark" id="why" aria-labelledby="why-title">
+  <div class="container why">
+    <div class="why__media reveal">
+      <Photo src={mazak} alt="Mazak Quickturn CNC lathe in the Alfa Triton workshop" class="why__img why__img--a" widths={[400]} sizes="(min-width: 1024px) 360px, 60vw" />
+      <Photo src={drawing} alt="Alfa Triton engineering drawing of a splined tapered coupling" class="why__img why__img--b" widths={[400, 800]} sizes="(min-width: 1024px) 420px, 70vw" badge="Real drawing · confirm OK to show" />
+      <div class="why__stamp" aria-hidden="true">
+        <span>Est.</span><strong>{site.founded}</strong><span>Western Sydney</span>
+      </div>
+    </div>
+    <div class="why__body">
+      <header class="section-head reveal">
+        <p class="eyebrow">Why Alfa Triton</p>
+        <h2 id="why-title">If a job's worth doing, it's worth doing <span class="accent">properly</span></h2>
+        <p>That's been our founding principle since {site.founded}. It's why food, pharma and heavy industry keep coming back.</p>
+      </header>
+      <ul class="reasons" role="list">
+        {reasons.map((r, i) => (
+          <li class="reason reveal" style={`--d:${i * 0.08}s`}>
+            <span class="reason__icon"><Icon name={r.icon} /></span>
+            <div><h3>{r.t}</h3><p>{r.d}</p></div>
+          </li>
+        ))}
+      </ul>
+      <p class="why__certs reveal">Certifications &amp; accreditations <NeedsUpdate note="ISO 9001 / welding tickets / safety" /></p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .why { display: grid; gap: 48px; }
+  @media (min-width: 1024px) { .why { grid-template-columns: 0.9fr 1.1fr; gap: 72px; align-items: center; } }
+  .why__media { position: relative; min-height: 380px; }
+  @media (min-width: 1024px) { .why__media { min-height: 560px; } }
+  .why__media :global(.why__img) { position: absolute; border-radius: var(--radius); box-shadow: 0 30px 60px rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.08); }
+  .why__media :global(.why__img--a) { left: 0; top: 0; width: 72%; aspect-ratio: 4 / 3; }
+  .why__media :global(.why__img--b) { right: 0; bottom: 0; width: 70%; aspect-ratio: 4 / 3; background: var(--white); }
+  .why__media :global(.why__img--b img) { object-fit: contain; }
+  .why__stamp {
+    position: absolute; left: 6%; bottom: 6%; z-index: 4; width: 116px; height: 116px; border-radius: 50%;
+    display: grid; place-content: center; text-align: center; background: var(--grad-blue); color: var(--white);
+    box-shadow: 0 12px 30px rgba(18,135,194,0.45); transform: rotate(-8deg);
+    font-size: 0.66rem; letter-spacing: 0.2em; text-transform: uppercase;
+  }
+  .why__stamp strong { font-family: var(--font-display); font-size: 2.2rem; letter-spacing: 0.02em; line-height: 1; }
+  .reasons { list-style: none; padding: 0; margin: 0; display: grid; gap: 20px; }
+  @media (min-width: 640px) { .reasons { grid-template-columns: 1fr 1fr; gap: 28px 32px; } }
+  .reason { display: grid; grid-template-columns: 44px 1fr; gap: 14px; }
+  .reason__icon { width: 44px; height: 44px; border-radius: var(--radius-sm); display: grid; place-items: center; background: rgba(24,166,220,0.1); color: var(--blue-400); border: 1px solid rgba(24,166,220,0.25); }
+  .reason__icon :global(svg) { width: 22px; height: 22px; }
+  .reason h3 { font-size: 1.35rem; color: var(--white); margin: 4px 0 6px; }
+  .reason p { font-size: 0.92rem; margin: 0; }
+  .why__certs { margin-top: 28px; font-size: 0.9rem; color: var(--text-inv-muted); }
+</style>

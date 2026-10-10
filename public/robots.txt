@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /quote.php
+Disallow: /thank-you/
+
+Sitemap: https://www.alfatriton.com.au/sitemap-index.xml

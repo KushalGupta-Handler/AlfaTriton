@@ -1,0 +1,128 @@
+---
+import logoLight from '../assets/brand/logo-light.svg?url';
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+
+const nav = [
+  { href: '/#services', label: 'Services' },
+  { href: '/#industries', label: 'Industries' },
+  { href: '/#projects', label: 'Projects' },
+  { href: '/#why', label: 'Why Alfa' },
+  { href: '/#faq', label: 'FAQ' },
+  { href: '/#contact', label: 'Contact' },
+];
+---
+<div class="topbar on-dark">
+  <div class="container topbar__inner">
+    <a href={`tel:${site.afterHours.tel}`} class="topbar__urgent">
+      <span class="live-dot" aria-hidden="true"></span>
+      <span><strong>24/7 Breakdown</strong> <span class="topbar__num">{site.afterHours.display}</span></span>
+    </a>
+    <span class="topbar__meta">Clyde, Western Sydney · Est. {site.founded}</span>
+  </div>
+</div>
+
+<header class="site-header" data-header>
+  <div class="container site-header__inner">
+    <a href="/" class="brand" aria-label={`${site.name} — home`}>
+      <img src={logoLight} alt={site.name} width="200" height="39" />
+    </a>
+
+    <nav class="nav" aria-label="Main" data-nav>
+      <ul>
+        {nav.map((n) => <li><a href={n.href}>{n.label}</a></li>)}
+      </ul>
+      <div class="nav__mobile-cta">
+        <a class="btn btn--block" href="/#quote">Get a fast quote <Icon name="arrow" /></a>
+        <a class="btn btn--urgent btn--block" href={`tel:${site.afterHours.tel}`}><Icon name="phone" /> 24/7: {site.afterHours.display}</a>
+        <p class="nav__mobile-meta">{site.address.street}, {site.address.locality} {site.address.region} {site.address.postcode}</p>
+      </div>
+    </nav>
+
+    <div class="site-header__actions">
+      <a href={`tel:${site.phone.tel}`} class="header-phone">
+        <Icon name="phone" />
+        <span><small>Call the workshop</small>{site.phone.display}</span>
+      </a>
+      <a href="/#quote" class="btn header-cta">Get a quote</a>
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="Open menu" data-menu-btn>
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<style>
+  .topbar { background: var(--ink); color: var(--text-inv); font-size: 0.85rem; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .topbar__inner { display: flex; align-items: center; justify-content: space-between; min-height: 38px; gap: 12px; }
+  .topbar__urgent { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+  .topbar__urgent strong { color: var(--urgent); font-weight: 600; }
+  .topbar__num { font-variant-numeric: tabular-nums; }
+  .topbar__meta { display: none; color: var(--text-inv-muted); }
+  @media (min-width: 640px) { .topbar__meta { display: block; } }
+
+  .site-header {
+    position: sticky; top: 0; z-index: 100;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    color: var(--text-inv);
+    transition: box-shadow 0.3s var(--ease);
+  }
+  /* Blur lives on a pseudo-element: backdrop-filter on the header itself would
+     become the containing block for the fixed mobile menu. */
+  .site-header::before {
+    content: ''; position: absolute; inset: 0; z-index: -1;
+    background: rgba(11, 12, 14, 0.82);
+    -webkit-backdrop-filter: saturate(160%) blur(14px); backdrop-filter: saturate(160%) blur(14px);
+    transition: background 0.3s var(--ease);
+  }
+  .site-header.is-scrolled { box-shadow: 0 6px 24px rgba(0,0,0,0.35); }
+  .site-header.is-scrolled::before { background: rgba(11, 12, 14, 0.95); }
+  .site-header__inner { display: flex; align-items: center; justify-content: space-between; height: var(--header-h); gap: 16px; }
+  .brand img { width: 168px; height: auto; }
+  @media (min-width: 768px) { .brand img { width: 210px; } }
+
+  .site-header__actions { display: flex; align-items: center; gap: 12px; }
+  .header-phone { display: none; align-items: center; gap: 10px; text-decoration: none; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .header-phone :global(svg) { width: 20px; height: 20px; color: var(--blue-400); }
+  .header-phone small { display: block; font-size: 0.7rem; font-weight: 500; color: var(--text-inv-muted); letter-spacing: 0.04em; text-transform: uppercase; }
+  .header-cta { display: none; min-height: 44px; padding: 10px 18px; font-size: 1rem; }
+
+  /* Mobile menu */
+  .menu-btn {
+    width: 44px; height: 44px; display: inline-flex; flex-direction: column; justify-content: center; align-items: center; gap: 5px;
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: var(--radius-sm); cursor: pointer;
+  }
+  .menu-btn span { width: 20px; height: 2px; background: var(--white); border-radius: 2px; transition: transform 0.3s var(--ease), opacity 0.2s; }
+  .menu-btn[aria-expanded='true'] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .menu-btn[aria-expanded='true'] span:nth-child(2) { opacity: 0; }
+  .menu-btn[aria-expanded='true'] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .nav {
+    position: fixed; inset: var(--nav-top, var(--header-h)) 0 0 0; z-index: 99;
+    background: var(--ink); padding: 24px var(--gutter) 40px; overflow-y: auto;
+    opacity: 0; transform: translateY(-12px); visibility: hidden; pointer-events: none;
+    transition: opacity 0.3s var(--ease), transform 0.3s var(--ease), visibility 0s linear 0.3s;
+  }
+  .nav.is-open { opacity: 1; transform: none; visibility: visible; pointer-events: auto; transition: opacity 0.3s var(--ease), transform 0.3s var(--ease); }
+  .nav ul { list-style: none; margin: 0 0 28px; padding: 0; }
+  .nav li { border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .nav a:not(.btn) {
+    display: block; padding: 16px 0; text-decoration: none;
+    font-family: var(--font-display); font-size: 1.9rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em;
+  }
+  .nav__mobile-cta { display: grid; gap: 12px; }
+  .nav__mobile-meta { color: var(--text-inv-muted); font-size: 0.9rem; margin-top: 8px; }
+
+  @media (min-width: 1024px) {
+    .menu-btn, .nav__mobile-cta { display: none; }
+    .header-phone, .header-cta { display: inline-flex; }
+    .nav { position: static; inset: auto; transform: none; opacity: 1; visibility: visible; pointer-events: auto; background: none; padding: 0; overflow: visible; transition: none; }
+    .nav ul { display: flex; gap: 4px; margin: 0; }
+    .nav li { border: 0; }
+    .nav a:not(.btn) {
+      font-family: var(--font-body); font-size: 0.92rem; font-weight: 500; text-transform: none; letter-spacing: 0;
+      padding: 10px 12px; border-radius: var(--radius-sm); color: var(--text-inv-muted); transition: color 0.2s, background 0.2s;
+    }
+    .nav a:not(.btn):hover { color: var(--white); background: rgba(255,255,255,0.06); }
+  }
+</style>

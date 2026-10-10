@@ -1,0 +1,236 @@
+---
+import Icon from './Icon.astro';
+import NeedsUpdate from './NeedsUpdate.astro';
+import { site, industries } from '../data/site';
+
+// Cloudflare Turnstile (free, invisible spam check). Add the real site key and
+// the secret in public/quote.php — until then the widget is skipped.
+const TURNSTILE_SITE_KEY = ''; // [Need update: create at dash.cloudflare.com → Turnstile]
+
+const needs = [
+  { v: 'Breakdown / urgent repair', icon: 'bolt' },
+  { v: 'Machined parts', icon: 'lathe' },
+  { v: 'Gear cutting / gearbox', icon: 'gear' },
+  { v: 'Stainless & sheet metal fabrication', icon: 'sheet' },
+  { v: 'Welding', icon: 'weld' },
+  { v: 'Machine design / rebuild', icon: 'cad' },
+];
+---
+<section class="section section--dark blueprint" id="contact" aria-labelledby="quote-title">
+  <div class="container quote-wrap">
+    <aside class="contact reveal">
+      <header class="section-head">
+        <p class="eyebrow">Get a quote</p>
+        <h2 id="quote-title">Tell us about <span class="accent">the job</span></h2>
+        <p>Takes about 60 seconds. Attach a drawing or a photo of the part and we'll come back with a price or a plan — usually within one business day. <NeedsUpdate note="confirm response time" /></p>
+      </header>
+
+      <a href={`tel:${site.afterHours.tel}`} class="contact__urgent">
+        <span class="live-dot" aria-hidden="true"></span>
+        <span><small>Line down right now?</small><strong>Call 24/7: {site.afterHours.display}</strong></span>
+        <Icon name="arrow" />
+      </a>
+
+      <ul class="contact__list" role="list">
+        <li><Icon name="phone" /><span><small>Workshop</small><a href={`tel:${site.phone.tel}`}>{site.phone.display}</a></span></li>
+        <li><Icon name="mail" /><span><small>Email</small><a href={`mailto:${site.email.address}`}>{site.email.address}</a> <NeedsUpdate note="confirm email" /></span></li>
+        <li><Icon name="pin" /><span><small>Workshop address</small><a href={site.address.mapsUrl} target="_blank" rel="noopener">{site.address.street}, {site.address.locality} {site.address.region} {site.address.postcode}</a> <NeedsUpdate note="Clyde or Greenacre?" /></span></li>
+        <li><Icon name="clock" /><span><small>Hours</small>{site.hours.display} <NeedsUpdate note="exact hours" /></span></li>
+      </ul>
+    </aside>
+
+    <div class="qf reveal" id="quote">
+      <form class="qf__form" action="/quote.php" method="post" enctype="multipart/form-data" novalidate data-quote-form>
+        <ol class="qf__progress" aria-hidden="true">
+          <li class="is-current"><span>1</span>The job</li>
+          <li><span>2</span>Details</li>
+          <li><span>3</span>Contact</li>
+        </ol>
+
+        <fieldset class="qf__step is-current" data-step="0">
+          <legend>What do you need?</legend>
+          <div class="qf__needs">
+            {needs.map((n, i) => (
+              <label class="qf__need">
+                <input type="radio" name="service" value={n.v} required={i === 0} />
+                <span><Icon name={n.icon} />{n.v}</span>
+              </label>
+            ))}
+          </div>
+          <div class="qf__alert" data-urgent-alert hidden>
+            <Icon name="bolt" />
+            <p><strong>Production stopped?</strong> Calling is faster than a form — <a href={`tel:${site.afterHours.tel}`}>{site.afterHours.display}</a> (24/7). Or continue and we'll call you back ASAP.</p>
+          </div>
+          <label class="qf__field">
+            <span>How urgent is it?</span>
+            <select name="urgency">
+              <option>Planning ahead / quote only</option>
+              <option>Within 2 weeks</option>
+              <option>This week</option>
+              <option>Urgent — line is down</option>
+            </select>
+          </label>
+        </fieldset>
+
+        <fieldset class="qf__step" data-step="1">
+          <legend>Job details</legend>
+          <label class="qf__field">
+            <span>Your industry</span>
+            <select name="industry">
+              <option value="">Select…</option>
+              {industries.map((i) => <option>{i.title}</option>)}
+              <option>Other</option>
+            </select>
+          </label>
+          <label class="qf__field">
+            <span>Describe the job <em>*</em></span>
+            <textarea name="message" rows="4" required minlength="10" placeholder="e.g. Worn splined shaft on a filler, need 2 replacements. Can supply the old part."></textarea>
+          </label>
+          <label class="qf__file">
+            <input type="file" name="files[]" multiple accept=".pdf,.dwg,.dxf,.step,.stp,.igs,.iges,.jpg,.jpeg,.png,.heic,.webp" data-file-input />
+            <span class="qf__file-ui"><Icon name="upload" /><span><strong>Attach drawings or photos</strong><small>PDF, DWG, DXF, STEP, JPG, PNG · up to 5 files, 10 MB each</small></span></span>
+            <span class="qf__file-list" data-file-list></span>
+          </label>
+          <label class="qf__check">
+            <input type="checkbox" name="site_visit" value="yes" />
+            <span>Please arrange a site visit / measure-up</span>
+          </label>
+        </fieldset>
+
+        <fieldset class="qf__step" data-step="2">
+          <legend>Where do we send the quote?</legend>
+          <div class="qf__grid">
+            <label class="qf__field"><span>Name <em>*</em></span><input name="name" autocomplete="name" required /></label>
+            <label class="qf__field"><span>Company</span><input name="company" autocomplete="organization" /></label>
+            <label class="qf__field"><span>Phone <em>*</em></span><input name="phone" type="tel" autocomplete="tel" inputmode="tel" required /></label>
+            <label class="qf__field"><span>Email <em>*</em></span><input name="email" type="email" autocomplete="email" required /></label>
+            <label class="qf__field"><span>Site suburb / postcode</span><input name="location" autocomplete="postal-code" /></label>
+            <label class="qf__field"><span>How did you find us?</span>
+              <select name="source"><option value="">Select…</option><option>Google search</option><option>Google Maps</option><option>Referral</option><option>Existing customer</option><option>AI assistant (ChatGPT etc.)</option><option>Other</option></select>
+            </label>
+          </div>
+
+          <!-- Spam protection: honeypot (hidden from people), time-trap, Turnstile -->
+          <div class="qf__hp" aria-hidden="true">
+            <label>Leave this field empty<input name="website" tabindex="-1" autocomplete="off" /></label>
+          </div>
+          <input type="hidden" name="ts" value="" data-ts />
+          {TURNSTILE_SITE_KEY && <div class="cf-turnstile" data-sitekey={TURNSTILE_SITE_KEY} data-theme="dark" data-size="flexible"></div>}
+
+          <p class="qf__privacy">We'll only use your details to respond to this enquiry. <a href="/privacy/">Privacy policy</a></p>
+        </fieldset>
+
+        <div class="qf__nav">
+          <button type="button" class="btn btn--ghost qf__back" data-prev hidden>Back</button>
+          <button type="button" class="btn qf__next" data-next>Next <Icon name="arrow" /></button>
+          <button type="submit" class="btn qf__submit" data-submit hidden>Send my enquiry <Icon name="arrow" /></button>
+        </div>
+        <p class="qf__status" role="status" aria-live="polite" data-status></p>
+      </form>
+
+      <div class="qf__done" data-done hidden tabindex="-1">
+        <span class="qf__done-icon"><Icon name="check" /></span>
+        <h3>Thanks — we've got it.</h3>
+        <p>Your enquiry is with the Alfa Triton team. We'll be in touch shortly. If it's urgent, call <a href={`tel:${site.afterHours.tel}`}>{site.afterHours.display}</a>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{TURNSTILE_SITE_KEY && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
+
+<style>
+  .quote-wrap { display: grid; gap: 36px; }
+  @media (min-width: 1024px) { .quote-wrap { grid-template-columns: 0.85fr 1.15fr; gap: 64px; align-items: start; } }
+
+  .contact__urgent {
+    display: flex; align-items: center; gap: 14px; padding: 16px 18px; margin-bottom: 24px; text-decoration: none;
+    border-radius: var(--radius); background: rgba(255,176,32,0.1); border: 1px solid rgba(255,176,32,0.4);
+  }
+  .contact__urgent small { display: block; color: var(--text-inv-muted); font-size: 0.8rem; }
+  .contact__urgent strong { font-family: var(--font-display); font-size: 1.45rem; text-transform: uppercase; color: var(--urgent); letter-spacing: 0.02em; }
+  .contact__urgent > :global(svg) { margin-left: auto; width: 22px; height: 22px; color: var(--urgent); }
+  .contact__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+  .contact__list li { display: grid; grid-template-columns: 24px 1fr; gap: 14px; align-items: start; color: var(--text-inv); }
+  .contact__list :global(svg) { width: 22px; height: 22px; color: var(--blue-400); margin-top: 2px; }
+  .contact__list small { display: block; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-inv-muted); }
+  .contact__list a { text-decoration: none; font-weight: 600; }
+  .contact__list a:hover { color: var(--blue-300); }
+
+  .qf { background: var(--white); color: var(--text); border-radius: var(--radius-lg); padding: 22px 18px; box-shadow: 0 30px 80px rgba(0,0,0,0.4); position: relative; }
+  @media (min-width: 768px) { .qf { padding: 36px; } }
+  .qf::before { content: ''; position: absolute; inset: 0 0 auto; height: 5px; border-radius: var(--radius-lg) var(--radius-lg) 0 0; background: var(--grad-blue); }
+  .qf__progress { display: flex; list-style: none; padding: 0; margin: 0 0 22px; gap: 6px; counter-reset: s; }
+  .qf__progress li { flex: 1; display: flex; flex-direction: column; gap: 6px; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--steel-400); }
+  .qf__progress li::before { content: ''; height: 4px; border-radius: 4px; background: var(--steel-200); transition: background 0.3s; }
+  .qf__progress li span { display: none; }
+  .qf__progress li.is-current, .qf__progress li.is-done { color: var(--blue-700); }
+  .qf__progress li.is-current::before, .qf__progress li.is-done::before { background: var(--grad-blue); }
+
+  fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+  legend { font-family: var(--font-display); font-weight: 800; text-transform: uppercase; font-size: 1.7rem; line-height: 1.1; margin-bottom: 16px; padding: 0; }
+  :global(.js) .qf__step:not(.is-current) { display: none; }
+  :global(.no-js) .qf__step { margin-bottom: 28px; }
+  :global(.no-js) .qf__nav [data-next], :global(.no-js) .qf__nav [data-prev] { display: none; }
+  :global(.no-js) .qf__nav [data-submit] { display: inline-flex !important; }
+  .qf__step.is-current { animation: stepIn 0.4s var(--ease); }
+  @keyframes stepIn { from { opacity: 0; transform: translateX(16px); } }
+
+  .qf__needs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .qf__need { position: relative; cursor: pointer; }
+  .qf__need input { position: absolute; opacity: 0; inset: 0; }
+  .qf__need > span {
+    display: flex; flex-direction: column; gap: 8px; height: 100%; padding: 14px 12px; border-radius: var(--radius-sm);
+    border: 1.5px solid var(--steel-200); background: var(--steel-100); font-size: 0.88rem; font-weight: 600; line-height: 1.25;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  }
+  .qf__need :global(svg) { width: 24px; height: 24px; color: var(--blue-600); }
+  .qf__need input:checked + span { border-color: var(--blue-500); background: #eaf6fc; box-shadow: 0 0 0 3px rgba(24,166,220,0.18); }
+  .qf__need input:focus-visible + span { outline: 3px solid var(--blue-400); outline-offset: 2px; }
+  .qf__need:first-child input:checked + span { border-color: var(--urgent); background: #fff7e6; box-shadow: 0 0 0 3px rgba(255,176,32,0.25); }
+  .qf__need:first-child :global(svg) { color: #c77f00; }
+
+  .qf__alert { display: flex; gap: 12px; padding: 14px; border-radius: var(--radius-sm); background: #fff7e6; border: 1px solid #ffd58a; margin-bottom: 16px; font-size: 0.9rem; }
+  .qf__alert :global(svg) { width: 22px; height: 22px; color: #c77f00; flex: none; }
+  .qf__alert p { margin: 0; }
+  .qf__alert a { font-weight: 700; white-space: nowrap; }
+
+  .qf__field { display: grid; gap: 6px; margin-bottom: 14px; font-size: 0.88rem; font-weight: 600; }
+  .qf__field em { color: var(--danger); font-style: normal; }
+  .qf__field input, .qf__field select, .qf__field textarea {
+    width: 100%; min-height: 50px; padding: 12px 14px; font-size: 1rem; font-weight: 400;
+    border: 1.5px solid var(--steel-300); border-radius: var(--radius-sm); background: var(--white);
+    transition: border-color 0.2s, box-shadow 0.2s; -webkit-appearance: none; appearance: none;
+  }
+  .qf__field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2356606a' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-size: 18px; padding-right: 40px; }
+  .qf__field textarea { resize: vertical; min-height: 110px; }
+  .qf__field input:focus, .qf__field select:focus, .qf__field textarea:focus { outline: none; border-color: var(--blue-500); box-shadow: 0 0 0 4px rgba(24,166,220,0.15); }
+  .qf__field .is-invalid, .qf__field [aria-invalid='true'] { border-color: var(--danger); }
+  .qf__grid { display: grid; gap: 0 14px; }
+  @media (min-width: 640px) { .qf__grid { grid-template-columns: 1fr 1fr; } }
+
+  .qf__file { display: block; position: relative; margin-bottom: 14px; }
+  .qf__file input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+  .qf__file-ui { display: flex; align-items: center; gap: 14px; padding: 18px; border: 2px dashed var(--steel-300); border-radius: var(--radius); background: var(--steel-100); transition: border-color 0.2s, background 0.2s; }
+  .qf__file:hover .qf__file-ui, .qf__file:focus-within .qf__file-ui { border-color: var(--blue-500); background: #eaf6fc; }
+  .qf__file-ui :global(svg) { width: 30px; height: 30px; color: var(--blue-600); flex: none; }
+  .qf__file-ui strong { display: block; font-size: 0.95rem; }
+  .qf__file-ui small { color: var(--text-muted); font-size: 0.78rem; }
+  .qf__file-list { display: block; font-size: 0.82rem; color: var(--blue-700); margin-top: 6px; }
+  .qf__check { display: flex; align-items: center; gap: 10px; font-size: 0.92rem; cursor: pointer; min-height: 44px; }
+  .qf__check input { width: 20px; height: 20px; accent-color: var(--blue-600); }
+
+  .qf__hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .qf__privacy { font-size: 0.8rem; color: var(--text-muted); margin: 6px 0 0; }
+
+  .qf__nav { display: flex; gap: 10px; margin-top: 20px; }
+  .qf__nav .btn { flex: 1; }
+  .qf__back { --btn-bg: var(--steel-100); color: var(--text); box-shadow: none; flex: 0 0 auto !important; }
+  .qf__status { margin: 12px 0 0; font-size: 0.9rem; color: var(--danger); min-height: 1.2em; }
+
+  .qf__done { text-align: center; padding: 30px 8px; }
+  .qf__done-icon { display: inline-grid; place-items: center; width: 72px; height: 72px; border-radius: 50%; background: var(--success); color: var(--white); margin-bottom: 16px; animation: pop 0.5s var(--ease); }
+  .qf__done-icon :global(svg) { width: 36px; height: 36px; }
+  .qf__done h3 { font-size: 2rem; }
+  @keyframes pop { from { transform: scale(0.4); opacity: 0; } }
+</style>

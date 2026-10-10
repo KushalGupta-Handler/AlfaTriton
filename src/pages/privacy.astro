@@ -1,0 +1,31 @@
+---
+import Base from '../layouts/Base.astro';
+import NeedsUpdate from '../components/NeedsUpdate.astro';
+import { site } from '../data/site';
+---
+<Base title={`Privacy Policy | ${site.name}`} description={`How ${site.name} collects and uses your personal information.`}>
+  <section class="section">
+    <div class="container prose">
+      <p class="eyebrow">Legal</p>
+      <h1>Privacy policy</h1>
+      <p><NeedsUpdate note="review by Oliver / legal adviser before launch" /></p>
+      <p>{site.legalName} trading as {site.name} ("we", "us") respects your privacy. This policy explains how we handle personal information under the <em>Privacy Act 1988</em> (Cth).</p>
+      <h2>What we collect</h2>
+      <p>When you contact us or submit an enquiry we collect your name, company, phone number, email, location and any details or files you choose to send.</p>
+      <h2>How we use it</h2>
+      <p>We use this information only to respond to your enquiry, prepare quotes and deliver our services. We do not sell or rent your information.</p>
+      <h2>Storage &amp; security</h2>
+      <p>Enquiries are delivered by email to our office and stored securely. Website hosting and email providers may process data on our behalf.</p>
+      <h2>Analytics</h2>
+      <p>We may use privacy-respecting analytics to understand how the website is used. <NeedsUpdate note="confirm analytics tool" /></p>
+      <h2>Contact</h2>
+      <p>For privacy questions or to access or correct your information, email <a href={`mailto:${site.email.address}`}>{site.email.address}</a> or call {site.phone.display}.</p>
+    </div>
+  </section>
+</Base>
+<style>
+  .prose { max-width: 760px; }
+  .prose h1 { font-size: var(--fs-h2); }
+  .prose h2 { font-size: 1.6rem; margin-top: 1.6em; }
+  .prose p { color: var(--text-muted); }
+</style>

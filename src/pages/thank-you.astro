@@ -1,0 +1,15 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../data/site';
+---
+<Base title={`Thanks for your enquiry | ${site.name}`} noindex>
+  <section class="section section--dark blueprint simple">
+    <div class="container">
+      <p class="eyebrow">Enquiry received</p>
+      <h1>Thanks — we've got it.</h1>
+      <p>Your enquiry is with the Alfa Triton team and we'll be in touch shortly. If your line is down, call <a href={`tel:${site.afterHours.tel}`}>{site.afterHours.display}</a> (24/7).</p>
+      <a class="btn" href="/">Back to home</a>
+    </div>
+  </section>
+</Base>
+<style>.simple { min-height: 70svh; display: grid; align-items: center; } .simple h1 { font-size: var(--fs-h2); }</style>

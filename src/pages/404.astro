@@ -1,0 +1,15 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../data/site';
+---
+<Base title={`Page not found | ${site.name}`} noindex>
+  <section class="section section--dark blueprint simple">
+    <div class="container">
+      <p class="eyebrow">Error 404</p>
+      <h1>This part's not in stock.</h1>
+      <p>The page you're after has moved or no longer exists. Try the home page, or call us on <a href={`tel:${site.phone.tel}`}>{site.phone.display}</a>.</p>
+      <div class="btn-row"><a class="btn" href="/">Home</a><a class="btn btn--ghost" href="/#quote">Get a quote</a></div>
+    </div>
+  </section>
+</Base>
+<style>.simple { min-height: 70svh; display: grid; align-items: center; } .simple h1 { font-size: var(--fs-h2); }</style>

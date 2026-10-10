@@ -1,0 +1,186 @@
+---
+/**
+ * Scroll-driven hero.
+ *
+ * HIGGSFIELD HOOK: export the Higgsfield animation as an MP4 (H.264, all-keyframe
+ * encode recommended: `ffmpeg -i in.mp4 -g 1 -crf 22 -an public/media/hero.mp4`)
+ * and set `videoSrc` below. The script in src/scripts/main.ts scrubs the video's
+ * currentTime to scroll progress. Until then a layered photo + generated gear
+ * blueprint animates on scroll instead.
+ */
+import Photo from './Photo.astro';
+import Icon from './Icon.astro';
+import heroImg from '../assets/photos/cnc-turning.jpg';
+import { site, yearsInBusiness } from '../data/site';
+
+const videoSrc: string | null = null; // e.g. '/media/hero.mp4'
+const videoPoster: string | null = null; // e.g. '/media/hero-poster.webp'
+
+// Generated gear blueprint (build time): 28-tooth involute-ish gear outline.
+function gearPath(teeth: number, rOuter: number, rRoot: number, cx = 200, cy = 200) {
+  const pts: string[] = [];
+  const step = (Math.PI * 2) / teeth;
+  for (let i = 0; i < teeth; i++) {
+    const a = i * step;
+    const seq: [number, number][] = [
+      [a, rRoot], [a + step * 0.18, rOuter], [a + step * 0.48, rOuter], [a + step * 0.66, rRoot],
+    ];
+    for (const [ang, r] of seq) pts.push(`${(cx + r * Math.cos(ang)).toFixed(2)},${(cy + r * Math.sin(ang)).toFixed(2)}`);
+  }
+  return `M${pts.join('L')}Z`;
+}
+const gear = gearPath(28, 180, 162);
+const gearSmall = gearPath(14, 96, 80, 200, 200);
+
+const captions = [
+  { k: '01', t: 'Line down?', d: 'Our crew is on site across Sydney — 24 hours, 7 days.' },
+  { k: '02', t: 'Measured. Modelled. Machined.', d: 'Worn and obsolete parts reverse-engineered and made in-house.' },
+  { k: '03', t: `${yearsInBusiness} years of precision`, d: `Built to Australian Standards since ${site.founded}, with a 12-month warranty.` },
+];
+---
+<section class="hero on-dark" data-hero aria-label="Introduction">
+  <div class="hero__sticky">
+    <div class="hero__media" aria-hidden="true">
+      {videoSrc ? (
+        <video class="hero__video" data-hero-video src={videoSrc} poster={videoPoster ?? undefined} muted playsinline preload="auto"></video>
+      ) : (
+        <>
+          <Photo src={heroImg} alt="" class="hero__photo" widths={[640, 1000]} sizes="100vw" loading="eager" fetchpriority="high" badge={false} />
+          <svg class="hero__gear" viewBox="0 0 400 400" fill="none">
+            <g class="hero__gear-big">
+              <path d={gear} stroke="currentColor" stroke-width="1.2" />
+              <circle cx="200" cy="200" r="150" stroke="currentColor" stroke-width="0.6" stroke-dasharray="4 6" />
+              <circle cx="200" cy="200" r="46" stroke="currentColor" stroke-width="1.2" />
+              <path d="M200 10v380M10 200h380" stroke="currentColor" stroke-width="0.5" stroke-dasharray="10 4 2 4" />
+            </g>
+            <g class="hero__gear-small">
+              <path d={gearSmall} stroke="currentColor" stroke-width="1" />
+              <circle cx="200" cy="200" r="22" stroke="currentColor" stroke-width="1" />
+            </g>
+            <text x="214" y="30" fill="currentColor" font-size="9" font-family="monospace" letter-spacing="1">Ø360 · z=28 · m12.9</text>
+          </svg>
+        </>
+      )}
+      <div class="hero__shade"></div>
+      <div class="hero__grid blueprint"></div>
+    </div>
+
+    {!videoSrc && (
+      <span class="img-badge hero__badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M3 7h3l2-3h8l2 3h3v13H3z"/><circle cx="12" cy="13" r="4"/></svg>
+        Higgsfield scroll animation goes here
+      </span>
+    )}
+
+    <div class="container hero__content">
+      <p class="hero__kicker"><span class="live-dot" aria-hidden="true"></span> Est. {site.founded} · Western Sydney</p>
+      <h1 class="hero__title">
+        Keep your <span class="accent">production line</span> running.
+      </h1>
+      <p class="hero__lead">
+        Precision CNC machining, gear cutting, stainless fabrication and <strong>24/7 on-site breakdown repairs</strong> for food, pharmaceutical, packaging and rail manufacturers.
+      </p>
+      <div class="btn-row hero__ctas">
+        <a href="#quote" class="btn">Get a fast quote <Icon name="arrow" /></a>
+        <a href={`tel:${site.afterHours.tel}`} class="btn btn--ghost"><Icon name="phone" /> Line down? Call 24/7</a>
+      </div>
+      <ul class="hero__chips" role="list">
+        <li><Icon name="flag" /> Australian owned</li>
+        <li><Icon name="shield" /> {site.warrantyMonths}-month warranty</li>
+        <li><Icon name="wrench" /> All machining in-house</li>
+      </ul>
+    </div>
+
+    <ol class="hero__captions container" aria-hidden="true">
+      {captions.map((c, i) => (
+        <li class="hero__caption" data-caption={i}>
+          <span class="hero__caption-k">{c.k}</span>
+          <span><strong>{c.t}</strong> {c.d}</span>
+        </li>
+      ))}
+    </ol>
+
+    <div class="hero__scroll" aria-hidden="true"><span></span>Scroll</div>
+    <div class="hero__progress" aria-hidden="true"><span></span></div>
+  </div>
+</section>
+
+<style>
+  .hero { --p: 0; position: relative; height: 175svh; background: var(--ink); color: var(--text-inv); }
+  @media (min-width: 1024px) { .hero { height: 230vh; } }
+  .hero__sticky { position: sticky; top: 0; height: 100svh; min-height: 620px; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; }
+
+  .hero__media { position: absolute; inset: 0; }
+  .hero__video { width: 100%; height: 100%; object-fit: cover; }
+  .hero__media :global(.hero__photo) {
+    position: absolute; inset: 0; height: 100%;
+    transform: scale(calc(1.08 + var(--p) * 0.22)) translateY(calc(var(--p) * -4%));
+    filter: saturate(0.9) contrast(1.05) brightness(calc(0.9 - var(--p) * 0.25));
+    will-change: transform;
+  }
+  .hero__gear {
+    position: absolute; width: min(120vw, 820px); right: -38%; top: 6%;
+    color: var(--blue-400); opacity: calc(0.28 + var(--p) * 0.4);
+    mix-blend-mode: screen;
+  }
+  @media (min-width: 1024px) { .hero__gear { right: -8%; top: -4%; width: 760px; } }
+  .hero__gear-big { transform-origin: 200px 200px; transform: rotate(calc(var(--p) * 140deg)); }
+  .hero__gear-small { transform-origin: 200px 200px; transform: rotate(calc(var(--p) * -280deg)); }
+  .hero__shade {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(180deg, rgba(11,12,14,0.55) 0%, rgba(11,12,14,0.15) 30%, rgba(11,12,14,0.75) 68%, rgba(11,12,14,0.97) 100%),
+      linear-gradient(90deg, rgba(11,12,14,0.65) 0%, transparent 70%);
+  }
+  .hero__grid { position: absolute; inset: 0; opacity: 0.7; mask-image: linear-gradient(180deg, transparent, #000 40%, #000 70%, transparent); }
+  .hero__badge { top: calc(var(--header-h) + 14px); left: var(--gutter); }
+
+  .hero__content {
+    position: relative; z-index: 2; padding-bottom: 116px;
+    opacity: calc(1 - var(--p) * 3.6); transform: translateY(calc(var(--p) * -90px));
+  }
+  .hero.is-past .hero__content { pointer-events: none; visibility: hidden; }
+  .hero__kicker {
+    display: inline-flex; align-items: center; gap: 10px; margin-bottom: 18px;
+    font-size: 0.78rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-inv-muted);
+    padding: 7px 14px 7px 12px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+  }
+  .hero__title { font-size: var(--fs-hero); max-width: 12ch; margin-bottom: 18px; }
+  .hero__lead { font-size: var(--fs-lead); max-width: 56ch; color: #c9d0d7; margin-bottom: 26px; }
+  .hero__lead strong { color: var(--white); font-weight: 600; }
+  .hero__ctas .btn { flex: 1 1 220px; }
+  @media (min-width: 640px) { .hero__ctas .btn { flex: 0 0 auto; } }
+  .hero__chips { display: flex; flex-wrap: wrap; gap: 8px 18px; list-style: none; padding: 0; margin: 22px 0 0; font-size: 0.88rem; color: var(--text-inv-muted); }
+  .hero__chips li { display: inline-flex; align-items: center; gap: 7px; }
+  .hero__chips :global(svg) { width: 17px; height: 17px; color: var(--blue-400); }
+
+  .hero__captions { position: absolute; left: 0; right: 0; bottom: calc(var(--mobilebar-h) + 28px); z-index: 2; list-style: none; margin: 0 auto; pointer-events: none; }
+  @media (min-width: 1024px) { .hero__captions { bottom: 40px; } }
+  .hero__caption {
+    position: absolute; left: var(--gutter); right: var(--gutter); bottom: 0;
+    display: flex; gap: 14px; align-items: baseline; max-width: 560px;
+    opacity: 0; transform: translateY(16px); transition: opacity 0.5s var(--ease), transform 0.5s var(--ease);
+    font-size: 0.98rem; color: #c9d0d7;
+  }
+  .hero__caption strong { display: block; font-family: var(--font-display); font-size: clamp(1.8rem, 6vw, 2.8rem); line-height: 1; text-transform: uppercase; color: var(--white); margin-bottom: 6px; }
+  .hero__caption-k { font-family: var(--font-display); font-weight: 600; color: var(--blue-400); letter-spacing: 0.1em; }
+  .hero__caption.is-active { opacity: 1; transform: none; }
+
+  .hero__scroll {
+    position: absolute; right: var(--gutter); bottom: 34px; z-index: 2; display: none;
+    writing-mode: vertical-rl; font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--text-inv-muted);
+    align-items: center; gap: 10px; opacity: calc(1 - var(--p) * 4);
+  }
+  .hero__scroll span { width: 1px; height: 48px; background: linear-gradient(var(--blue-400), transparent); animation: drip 2s var(--ease) infinite; }
+  @keyframes drip { 0% { transform: scaleY(0); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; } 51% { transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
+  @media (min-width: 768px) { .hero__scroll { display: flex; } }
+
+  .hero__progress { position: absolute; left: 0; right: 0; top: 0; height: 3px; background: rgba(255,255,255,0.06); z-index: 3; }
+  .hero__progress span { display: block; height: 100%; width: 100%; background: var(--grad-blue); transform-origin: left; transform: scaleX(var(--p)); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero { height: auto; }
+    .hero__sticky { position: relative; }
+    .hero__captions, .hero__progress, .hero__scroll { display: none; }
+  }
+</style>

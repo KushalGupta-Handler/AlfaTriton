@@ -1,0 +1,78 @@
+---
+import Icon from './Icon.astro';
+import NeedsUpdate from './NeedsUpdate.astro';
+import { site } from '../data/site';
+// Stylised map: coordinates projected from real lon/lat (x=(lon-150.05)*300, y=(-33.15-lat)*300).
+const hq = { x: 291.4, y: 204.8 };
+const places = [
+  { n: 'Central Coast', x: 387.8, y: 83, anchor: 'end', dx: -12, dy: -8 },
+  { n: 'Blue Mountains', x: 78.6, y: 168.8, anchor: 'start', dx: 0, dy: -16 },
+  { n: 'Wollongong', x: 252.9, y: 383.3, anchor: 'end', dx: -12, dy: 4 },
+  { n: 'Sydney CBD', x: 347.8, y: 215.6, anchor: 'start', dx: 10, dy: 18 },
+  { n: 'Penrith', x: 193.3, y: 180.2, anchor: 'middle', dx: 0, dy: 22 },
+];
+const coast = '471,-45 435,45 414,90 384,129 375,171 369,210 357,249 330,270 300,306 279,339 261,375 243,420 225,465';
+---
+<section class="section section--ink" id="area" aria-labelledby="area-title">
+  <div class="container area">
+    <div class="area__body">
+      <header class="section-head reveal">
+        <p class="eyebrow">Service area</p>
+        <h2 id="area-title">On site from the <span class="accent">Central Coast to Wollongong</span></h2>
+        <p>Our fitters and welders travel to your plant across Greater Sydney, the Central Coast, the Illawarra and the Blue Mountains. Larger jobs come back to our workshop in {site.address.locality}.</p>
+      </header>
+      <ul class="area__list reveal" role="list">
+        {site.serviceArea.map((a) => <li><Icon name="pin" />{a}</li>)}
+      </ul>
+      <p class="area__note reveal">Outside these areas? Workshop jobs are freighted Australia-wide. <NeedsUpdate note="confirm interstate freight" /></p>
+      <a href={`tel:${site.afterHours.tel}`} class="btn btn--urgent reveal"><Icon name="phone" /> 24/7 breakdown: {site.afterHours.display}</a>
+    </div>
+
+    <figure class="map reveal" aria-label="Map of the Alfa Triton service area around Sydney">
+      <svg viewBox="0 0 480 440" role="img" aria-labelledby="map-desc">
+        <desc id="map-desc">Service area map centred on Clyde, Western Sydney, reaching the Central Coast to the north, Wollongong to the south and the Blue Mountains to the west.</desc>
+        <defs>
+          <radialGradient id="glow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#18a6dc" stop-opacity=".35"/><stop offset="1" stop-color="#18a6dc" stop-opacity="0"/></radialGradient>
+          <pattern id="dots" width="12" height="12" patternUnits="userSpaceOnUse"><circle cx="1.5" cy="1.5" r="1" fill="#ffffff" fill-opacity=".08"/></pattern>
+        </defs>
+        <rect width="480" height="440" fill="url(#dots)"/>
+        <polygon points={`${coast} 520,465 520,-45`} fill="#0a5e8c" fill-opacity=".18"/>
+        <polyline points={coast} fill="none" stroke="#6fcaf0" stroke-opacity=".5" stroke-width="1.2"/>
+        <text x="440" y="330" fill="#6fcaf0" fill-opacity=".45" font-size="11" letter-spacing="4" text-anchor="middle" transform="rotate(-62 440 330)">TASMAN SEA</text>
+        <path class="map__zone" d="M387.8 70 C 300 60, 120 110, 70 168 C 60 230, 180 330, 252.9 396 C 300 340, 360 260, 380 150 Z" fill="#18a6dc" fill-opacity=".07" stroke="#18a6dc" stroke-opacity=".55" stroke-width="1.2" stroke-dasharray="6 6"/>
+        <circle cx={hq.x} cy={hq.y} r="120" fill="url(#glow)"/>
+        {places.map((p) => (
+          <g>
+            <line class="map__route" x1={hq.x} y1={hq.y} x2={p.x} y2={p.y} stroke="#18a6dc" stroke-width="1.2" stroke-dasharray="3 5"/>
+            <circle cx={p.x} cy={p.y} r="4" fill="#0b0c0e" stroke="#6fcaf0" stroke-width="2"/>
+            <text x={p.x + p.dx} y={p.y + p.dy} fill="#e3e7eb" font-size="13" font-weight="600" text-anchor={p.anchor} font-family="Inter Variable, Inter, sans-serif">{p.n}</text>
+          </g>
+        ))}
+        <g class="map__hq">
+          <circle cx={hq.x} cy={hq.y} r="10" fill="#18a6dc" class="map__pulse"/>
+          <circle cx={hq.x} cy={hq.y} r="8" fill="#18a6dc" stroke="#fff" stroke-width="2.5"/>
+          <rect x={hq.x - 118} y={hq.y + 14} width="112" height="38" rx="6" fill="#ffffff"/>
+          <text x={hq.x - 62} y={hq.y + 30} fill="#0b0c0e" font-size="12" font-weight="700" text-anchor="middle" font-family="Inter Variable, Inter, sans-serif">ALFA TRITON</text>
+          <text x={hq.x - 62} y={hq.y + 45} fill="#56606a" font-size="10" text-anchor="middle" font-family="Inter Variable, Inter, sans-serif">Workshop · Clyde</text>
+        </g>
+      </svg>
+      <figcaption><a href={site.address.mapsUrl} target="_blank" rel="noopener" class="link-arrow">Open in Google Maps <Icon name="arrow" /></a></figcaption>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .area { display: grid; gap: 40px; }
+  @media (min-width: 1024px) { .area { grid-template-columns: 1fr 1.1fr; align-items: center; gap: 64px; } }
+  .area__list { list-style: none; padding: 0; margin: 0 0 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .area__list li { display: flex; align-items: center; gap: 8px; padding: 12px 14px; border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); font-weight: 600; font-size: 0.92rem; background: rgba(255,255,255,0.03); }
+  .area__list :global(svg) { width: 18px; height: 18px; color: var(--blue-400); flex: none; }
+  .area__note { font-size: 0.88rem; }
+  .map { margin: 0; border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius-lg); background: var(--char-900); padding: 8px; overflow: hidden; }
+  .map svg { width: 100%; height: auto; }
+  .map figcaption { padding: 10px 12px 6px; }
+  .map__route { stroke-dashoffset: 0; animation: route 1.6s linear infinite; }
+  @keyframes route { to { stroke-dashoffset: -16; } }
+  .map__pulse { transform-box: fill-box; transform-origin: center; animation: ping 2s var(--ease) infinite; }
+  .map__zone { animation: route 3s linear infinite; }
+</style>

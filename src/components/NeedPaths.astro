@@ -1,0 +1,69 @@
+---
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+const paths = [
+  {
+    tag: 'Urgent', icon: 'bolt', title: 'My line is down',
+    copy: 'Breakdown or failure on the floor? We dispatch fitters and welders, diagnose on site and make replacement parts fast.',
+    cta: { label: `Call 24/7 · ${site.afterHours.display}`, href: `tel:${site.afterHours.tel}` }, urgent: true,
+  },
+  {
+    tag: 'Parts', icon: 'lathe', title: 'I need parts made',
+    copy: 'Send a drawing, a sketch or the worn part. We machine one-offs, spares and production runs — including obsolete gears.',
+    cta: { label: 'Send drawing for quote', href: '#quote', service: 'Machined parts' },
+  },
+  {
+    tag: 'Projects', icon: 'cad', title: 'I need equipment built',
+    copy: 'New stainless equipment, guards and frames, or a machine rebuilt and improved — designed, built and installed by one team.',
+    cta: { label: 'Discuss a project', href: '#quote', service: 'Machine design / rebuild' },
+  },
+];
+---
+<section class="section section--steel blueprint" id="help" aria-labelledby="help-title">
+  <div class="container">
+    <header class="section-head reveal">
+      <p class="eyebrow">How can we help?</p>
+      <h2 id="help-title">Tell us what's <span class="accent">going on</span></h2>
+      <p>Three ways in. Pick the one that matches your situation and you'll reach the right person, fast.</p>
+    </header>
+    <div class="paths">
+      {paths.map((p, i) => (
+        <article class:list={['path reveal', { 'path--urgent': p.urgent }]} style={`--d:${i * 0.1}s`}>
+          <div class="path__top">
+            <span class="path__icon"><Icon name={p.icon} /></span>
+            <span class="path__tag">{p.tag}</span>
+          </div>
+          <h3>{p.title}</h3>
+          <p>{p.copy}</p>
+          <a class:list={['btn btn--block', { 'btn--urgent': p.urgent, 'btn--outline': !p.urgent }]} href={p.cta.href} data-service={p.cta.service}>
+            {p.urgent && <Icon name="phone" />}{p.cta.label}{!p.urgent && <Icon name="arrow" />}
+          </a>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .paths { display: grid; gap: 16px; }
+  @media (min-width: 900px) { .paths { grid-template-columns: repeat(3, 1fr); gap: 24px; } }
+  .path {
+    display: flex; flex-direction: column; gap: 4px;
+    background: var(--white); border: 1px solid var(--steel-200); border-radius: var(--radius);
+    padding: 24px; box-shadow: var(--shadow-1); position: relative; overflow: hidden;
+    transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease), border-color 0.3s;
+  }
+  .path:hover { transform: translateY(-4px); box-shadow: var(--shadow-2); border-color: var(--blue-300); }
+  .path::before { content: ''; position: absolute; inset: 0 0 auto; height: 4px; background: var(--grad-blue); }
+  .path--urgent { background: var(--char-900); color: var(--text-inv); border-color: var(--char-700); }
+  .path--urgent::before { background: var(--urgent); }
+  .path__top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .path__icon { width: 52px; height: 52px; display: grid; place-items: center; border-radius: var(--radius-sm); background: var(--steel-100); color: var(--blue-600); }
+  .path--urgent .path__icon { background: rgba(255,176,32,0.12); color: var(--urgent); }
+  .path__icon :global(svg) { width: 28px; height: 28px; }
+  .path__tag { font-family: var(--font-display); font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; font-size: 0.85rem; color: var(--steel-500); }
+  .path--urgent .path__tag { color: var(--urgent); }
+  .path h3 { font-size: 1.9rem; margin-bottom: 6px; }
+  .path p { color: var(--text-muted); flex: 1; margin-bottom: 20px; }
+  .path--urgent p { color: var(--text-inv-muted); }
+</style>

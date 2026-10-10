@@ -1,0 +1,118 @@
+---
+import '@fontsource-variable/inter';
+import '@fontsource/barlow-condensed/600.css';
+import '@fontsource/barlow-condensed/700.css';
+import '@fontsource/barlow-condensed/800.css';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { site, services, faqs } from '../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  noindex?: boolean;
+  faq?: boolean;
+}
+const {
+  title = `${site.name} | CNC Machining, Fabrication & 24/7 Breakdown Repairs Sydney`,
+  description = site.description,
+  noindex = false,
+  faq = false,
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, site.url).href;
+const ogImage = new URL('/og-image.jpg', site.url).href;
+
+// Structured data for search engines + AI answer engines.
+const graph: Record<string, unknown>[] = [
+  {
+    '@type': 'LocalBusiness',
+    '@id': `${site.url}/#business`,
+    name: site.name,
+    legalName: site.legalName,
+    url: site.url,
+    logo: `${site.url}/favicon.svg`,
+    image: ogImage,
+    description: site.description,
+    foundingDate: String(site.founded),
+    telephone: site.phone.tel,
+    email: site.email.address,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: site.address.street,
+      addressLocality: site.address.locality,
+      addressRegion: site.address.region,
+      postalCode: site.address.postcode,
+      addressCountry: site.address.country,
+    },
+    geo: { '@type': 'GeoCoordinates', latitude: site.address.geo.lat, longitude: site.address.geo.lng },
+    areaServed: site.serviceArea.map((name) => ({ '@type': 'Place', name })),
+    contactPoint: [
+      { '@type': 'ContactPoint', telephone: site.phone.tel, contactType: 'sales', areaServed: 'AU' },
+      { '@type': 'ContactPoint', telephone: site.afterHours.tel, contactType: 'emergency', hoursAvailable: 'Mo-Su 00:00-23:59', areaServed: 'AU' },
+    ],
+    knowsAbout: ['CNC machining', 'Gear cutting', 'Stainless steel fabrication', 'TIG welding', 'Machine design', 'Reverse engineering', 'Breakdown maintenance'],
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
+      name: 'Engineering services',
+      itemListElement: services.map((s) => ({
+        '@type': 'Offer',
+        itemOffered: { '@type': 'Service', name: s.title, description: s.short, areaServed: 'Greater Sydney, NSW' },
+      })),
+    },
+  },
+  { '@type': 'WebSite', '@id': `${site.url}/#website`, url: site.url, name: site.name, publisher: { '@id': `${site.url}/#business` } },
+];
+if (faq) {
+  graph.push({
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  });
+}
+const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph });
+---
+<!doctype html>
+<html lang="en-AU" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+    <meta name="theme-color" content="#0b0c0e" />
+    <meta name="format-detection" content="telephone=yes" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_AU" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <meta name="geo.region" content="AU-NSW" />
+    <meta name="geo.placename" content="Clyde, Sydney" />
+
+    <script is:inline>document.documentElement.classList.replace('no-js', 'js');</script>
+    <script type="application/ld+json" set:html={jsonLd} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <script>
+      import '../scripts/main';
+    </script>
+  </body>
+</html>
