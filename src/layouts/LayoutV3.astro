@@ -9,10 +9,11 @@ import GearStageV3 from '../components/v3/GearStageV3.astro';
 import VersionSwitch from '../components/VersionSwitch.astro';
 import { site, faqs } from '../data/site';
 
-interface Props { title?: string; description?: string }
+interface Props { title?: string; description?: string; review?: boolean }
 const {
   title = `${site.name} | Precision Engineering & 24/7 Breakdown Repairs, Sydney`,
   description = site.description,
+  review = true,
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, site.url).href;
 const ogImage = new URL('/og-image.jpg', site.url).href;
@@ -55,8 +56,8 @@ const jsonLd = JSON.stringify({
     <HeaderV3 />
     <GearStageV3 />
     <main id="main"><slot /></main>
-    <FooterV3 />
-    <VersionSwitch current="v3" />
+    <FooterV3 review={review} />
+    {review && <VersionSwitch current="v3" />}
     <script>import '../scripts/v3';</script>
   </body>
 </html>

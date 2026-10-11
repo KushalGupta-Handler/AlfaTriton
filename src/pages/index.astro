@@ -1,31 +1,21 @@
 ---
-import Base from '../layouts/Base.astro';
-import Hero from '../components/Hero.astro';
-import Stats from '../components/Stats.astro';
-import NeedPaths from '../components/NeedPaths.astro';
-import Services from '../components/Services.astro';
-import Industries from '../components/Industries.astro';
-import Projects from '../components/Projects.astro';
-import Process from '../components/Process.astro';
-import WhyUs from '../components/WhyUs.astro';
-import Capabilities from '../components/Capabilities.astro';
-import ServiceArea from '../components/ServiceArea.astro';
-import Testimonials from '../components/Testimonials.astro';
-import FAQ from '../components/FAQ.astro';
-import QuoteForm from '../components/QuoteForm.astro';
+import LayoutV3 from '../layouts/LayoutV3.astro';
+import HeroV3 from '../components/v3/HeroV3.astro';
+import PhotoStripV3 from '../components/v3/PhotoStripV3.astro';
+import ServicesV3 from '../components/v3/ServicesV3.astro';
+import ProcessV3 from '../components/v3/ProcessV3.astro';
+import WorkV3 from '../components/v3/WorkV3.astro';
+import ProofV3 from '../components/v3/ProofV3.astro';
+import QuoteV3 from '../components/v3/QuoteV3.astro';
+import FaqV3 from '../components/v3/FaqV3.astro';
 ---
-<Base faq>
-  <Hero />
-  <Stats />
-  <NeedPaths />
-  <Services />
-  <Industries />
-  <Projects />
-  <Process />
-  <WhyUs />
-  <Capabilities />
-  <ServiceArea />
-  <Testimonials />
-  <FAQ />
-  <QuoteForm />
-</Base>
+<LayoutV3 review={false}>
+  <HeroV3 />
+  <PhotoStripV3 />
+  <ServicesV3 />
+  <ProcessV3 />
+  <WorkV3 />
+  <ProofV3 />
+  <QuoteV3 />
+  <FaqV3 />
+</LayoutV3>

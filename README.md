@@ -9,9 +9,11 @@ Mobile-first, lead-focused website for **Alfa Triton Engineering** (Alfa Triton 
 
 | URL | Design | Notes |
 |---|---|---|
-| `/` | **V1**: detailed, multi-section | Kept as-is for comparison |
-| `/v2/` | **V2**: "machined graphite", fewer words, rolling gear train, 2-field quote | `noindex` until chosen |
-| `/v3/` | **V3**: V2 refined from the review: full-page gear, time-aware calls, early proof, no duplicates | `noindex` until chosen |
+| `/` | **V3** (live default): full-page gear, time-aware calls, early proof, no duplicates | Clean: no design switcher. `/v3/` redirects here |
+| `/v1/` | **V1**: detailed, multi-section | Kept for comparison, `noindex` |
+| `/v2/` | **V2**: "machined graphite", rolling gear in the first three sections | Kept for comparison, `noindex` |
+
+V3 is still `noindex` (set in `LayoutV3.astro`) while it's a review build on vercel.app; remove that once it goes live on alfatriton.com.au.
 
 A small **Design V1 / V2** tab on the right edge of both pages switches between them (`src/components/VersionSwitch.astro`; delete it once a version is chosen).
 To make V2 the live homepage: move `src/pages/v2/index.astro` to `src/pages/index.astro`, remove the `noindex` meta in `LayoutV2.astro`, and update the anchors in `vercel.json` redirects.

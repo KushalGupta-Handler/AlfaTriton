@@ -3,6 +3,7 @@ import logo from '../../assets/brand/logo-light.svg?url';
 import Icon from '../Icon.astro';
 import { site } from '../../data/site';
 const year = new Date().getFullYear();
+const { review = true } = Astro.props as { review?: boolean };
 ---
 <footer class="ft" data-gear="27,57,0.45,0.8" data-gear-m="84,47,0.5,0.3" data-final>
   <div class="wrap">
@@ -23,7 +24,7 @@ const year = new Date().getFullYear();
       <img src={logo} alt={site.name} width="160" height="31" loading="lazy" />
       <span>© {year} {site.name} · a trading name of {site.legalName}</span>
       <a href="/privacy/">Privacy</a>
-      <span class="ft__ver">Design: <a href="/">V1</a> · <a href="/v2/">V2</a> · <b>V3</b></span>
+      {review && <span class="ft__ver">Design: <a href="/v1/">V1</a> · <a href="/v2/">V2</a> · <a href="/">V3</a></span>}
     </div>
   </div>
 </footer>

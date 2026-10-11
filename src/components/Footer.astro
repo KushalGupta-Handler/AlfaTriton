@@ -4,12 +4,13 @@ import Icon from './Icon.astro';
 import NeedsUpdate from './NeedsUpdate.astro';
 import { site, services } from '../data/site';
 const year = new Date().getFullYear();
+const home = Astro.url.pathname.startsWith('/v1') ? '/v1/' : '/';
 ---
 <section class="cta-band on-dark" aria-label="Get in touch">
   <div class="container cta-band__inner">
     <h2>Need it fixed, made or <span class="accent">built?</span></h2>
     <div class="btn-row">
-      <a class="btn" href="/#quote">Get a fast quote <Icon name="arrow" /></a>
+      <a class="btn" href={`${home}#quote`}>Get a fast quote <Icon name="arrow" /></a>
       <a class="btn btn--ghost" href={`tel:${site.phone.tel}`}><Icon name="phone" /> {site.phone.display}</a>
     </div>
   </div>
@@ -24,7 +25,7 @@ const year = new Date().getFullYear();
     </div>
     <nav aria-label="Services">
       <h3>Services</h3>
-      <ul role="list">{services.map((s) => <li><a href={`/#service-${s.id}`}>{s.title}</a></li>)}</ul>
+      <ul role="list">{services.map((s) => <li><a href={`${home}#service-${s.id}`}>{s.title}</a></li>)}</ul>
     </nav>
     <div>
       <h3>Contact</h3>
@@ -45,7 +46,7 @@ const year = new Date().getFullYear();
 
 <nav class="mobilebar" aria-label="Quick actions">
   <a href={`tel:${site.afterHours.tel}`} class="mobilebar__call"><span class="live-dot" aria-hidden="true"></span><span><small>24/7 breakdown</small>Call now</span></a>
-  <a href="/#quote" class="mobilebar__quote">Get a quote <Icon name="arrow" /></a>
+  <a href={`${home}#quote`} class="mobilebar__quote">Get a quote <Icon name="arrow" /></a>
 </nav>
 
 <style>

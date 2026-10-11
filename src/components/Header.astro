@@ -3,13 +3,15 @@ import logoLight from '../assets/brand/logo-light.svg?url';
 import Icon from './Icon.astro';
 import { site } from '../data/site';
 
+// V1 now lives at /v1/; keep its in-page links there.
+const home = Astro.url.pathname.startsWith('/v1') ? '/v1/' : '/';
 const nav = [
-  { href: '/#services', label: 'Services' },
-  { href: '/#industries', label: 'Industries' },
-  { href: '/#projects', label: 'Projects' },
-  { href: '/#why', label: 'Why Alfa' },
-  { href: '/#faq', label: 'FAQ' },
-  { href: '/#contact', label: 'Contact' },
+  { href: `${home}#services`, label: 'Services' },
+  { href: `${home}#industries`, label: 'Industries' },
+  { href: `${home}#projects`, label: 'Projects' },
+  { href: `${home}#why`, label: 'Why Alfa' },
+  { href: `${home}#faq`, label: 'FAQ' },
+  { href: `${home}#contact`, label: 'Contact' },
 ];
 ---
 <div class="topbar on-dark">
@@ -24,7 +26,7 @@ const nav = [
 
 <header class="site-header" data-header>
   <div class="container site-header__inner">
-    <a href="/" class="brand" aria-label={`${site.name} — home`}>
+    <a href={home} class="brand" aria-label={`${site.name} — home`}>
       <img src={logoLight} alt={site.name} width="200" height="39" />
     </a>
 
@@ -33,7 +35,7 @@ const nav = [
         {nav.map((n) => <li><a href={n.href}>{n.label}</a></li>)}
       </ul>
       <div class="nav__mobile-cta">
-        <a class="btn btn--block" href="/#quote">Get a fast quote <Icon name="arrow" /></a>
+        <a class="btn btn--block" href={`${home}#quote`}>Get a fast quote <Icon name="arrow" /></a>
         <a class="btn btn--urgent btn--block" href={`tel:${site.afterHours.tel}`}><Icon name="phone" /> 24/7: {site.afterHours.display}</a>
         <p class="nav__mobile-meta">{site.address.street}, {site.address.locality} {site.address.region} {site.address.postcode}</p>
       </div>
@@ -44,7 +46,7 @@ const nav = [
         <Icon name="phone" />
         <span><small>Call the workshop</small>{site.phone.display}</span>
       </a>
-      <a href="/#quote" class="btn header-cta">Get a quote</a>
+      <a href={`${home}#quote`} class="btn header-cta">Get a quote</a>
       <button class="menu-btn" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="Open menu" data-menu-btn>
         <span></span><span></span><span></span>
       </button>
