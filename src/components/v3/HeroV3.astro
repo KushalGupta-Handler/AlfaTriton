@@ -1,0 +1,37 @@
+---
+import Icon from '../Icon.astro';
+import { site } from '../../data/site';
+// HIGGSFIELD: set to '/media/hero.mp4' (all-keyframe encode, see README); scrubbed by scroll.
+const videoSrc: string | null = null;
+const lines = ['We keep', 'production lines', 'running.'];
+---
+<section class="hero" data-gear="80,47,0.95,0.95" data-gear-m="84,34,0.95,0.38" data-rack="1" aria-label="Introduction">
+  {videoSrc && <video class="hero__video" data-hero-video src={videoSrc} muted playsinline preload="auto"></video>}
+  <div class="wrap hero__in">
+    <p class="label"><b>/</b> Est. {site.founded} · Clyde, Western Sydney</p>
+    <h1 class="hero__h split" data-split>
+      {lines.map((l, i) => <span><span style={`--i:${i}`} class:list={{ hl: i === 1 }}>{l}</span></span>)}
+    </h1>
+    <p class="lede hero__lede">Precision machining, gear cutting and stainless fabrication for food, pharma and packaging plants — made in our own workshop.</p>
+    <div class="b-row hero__cta" data-hero-cta>
+      <a class="b" href="#quote">Get a quote <Icon name="arrow" /></a>
+      <a class="b b--line" href={`tel:${site.phone.tel}`} data-call><Icon name="phone" /> <span data-call-label>Call {site.phone.display}</span></a>
+    </div>
+    <p class="hero__urgent" data-open-only>
+      <span class="pulse" aria-hidden="true"></span> Line down? <a href={`tel:${site.afterHours.tel}`}>24/7 breakdown: {site.afterHours.display}</a>
+    </p>
+  </div>
+</section>
+
+<style>
+  .hero { position: relative; min-height: 100svh; display: flex; flex-direction: column; justify-content: flex-end; padding: calc(var(--header-h) + 24px) 0 clamp(36px, 8vh, 72px); }
+  .hero__video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.5; }
+  .hero__h { font-size: clamp(2.6rem, 11.6vw, 7.4rem); line-height: 0.94; letter-spacing: -0.042em; margin-bottom: 22px; }
+  .hero__lede { margin-bottom: 28px; }
+  .hero__cta .b { flex: 1 1 180px; }
+  .hero__cta .b :global(svg) { transform: none !important; }
+  @media (min-width: 640px) { .hero__cta .b { flex: 0 0 auto; } }
+  .hero__urgent { display: flex; align-items: center; gap: 10px; margin: 18px 0 0; font-size: 0.9rem; color: var(--fg-2); }
+  .hero__urgent a { color: var(--spark); font-weight: 600; text-decoration: none; }
+  .hero__urgent a:hover { text-decoration: underline; }
+</style>

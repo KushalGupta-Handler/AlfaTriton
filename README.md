@@ -11,6 +11,7 @@ Mobile-first, lead-focused website for **Alfa Triton Engineering** (Alfa Triton 
 |---|---|---|
 | `/` | **V1**: detailed, multi-section | Kept as-is for comparison |
 | `/v2/` | **V2**: "machined graphite", fewer words, rolling gear train, 2-field quote | `noindex` until chosen |
+| `/v3/` | **V3**: V2 refined from the review: full-page gear, time-aware calls, early proof, no duplicates | `noindex` until chosen |
 
 A small **Design V1 / V2** tab on the right edge of both pages switches between them (`src/components/VersionSwitch.astro`; delete it once a version is chosen).
 To make V2 the live homepage: move `src/pages/v2/index.astro` to `src/pages/index.astro`, remove the `noindex` meta in `LayoutV2.astro`, and update the anchors in `vercel.json` redirects.
@@ -21,6 +22,13 @@ To make V2 the live homepage: move `src/pages/v2/index.astro` to `src/pages/inde
 - **How we work**: 4 steps with timings and a scroll-filled rail.
 - **Before/after**: full-width restoration slider.
 - **Quote**: "Call me back" needs only name + phone; "Quote with photo" adds optional details and one photo (auto-shrunk in the browser). Big tap-to-call numbers sit beside the form so people can skip it entirely.
+
+### V3 changes (from the V2 review)
+- **Full-page gear** (`GearStageV3.astro`, `src/scripts/v3.ts`): a fixed layer above section backgrounds and below content (`.wrap` is `z-index: 2`; sections must not create stacking contexts). It turns for the whole scroll, rolling along a rack in the hero, then docks at the right edge with an edge rack driving it (2:1 reduction), recolours on the light section, and settles beside the footer. A fixed light "glint" masked by the turning gear gives the look of machined steel. Use `data-gear="D,…"` to dock a section.
+- **Time-aware call buttons**: in business hours (`site.businessHours`, Sydney time) "Call" dials the workshop; after hours it dials the 24/7 line. [Need update from Oliver: exact hours]
+- **Early proof**: a strip of real job photos right after the hero, and a "Who you'll deal with" section with workshop photos, a testimonial slot and a client/certification logo slot.
+- **Removed**: the stats block (repeated earlier content), the hero RPM/spec strip, the gear annotations, section numbering, repeated FAQs, and the industry "chips" (now a plain text line).
+- The design switcher now shows only near the top of the page, and V3 also links V1/V2 in the footer.
 
 ## Spam protection (Oliver's pain point)
 

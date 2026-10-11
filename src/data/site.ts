@@ -25,6 +25,8 @@ export const site = {
     mapsUrl: 'https://maps.google.com/?q=18+Wentworth+St+Clyde+NSW+2142',
   },
   hours: { display: 'Mon–Fri business hours · 24/7 breakdown line', verify: true },
+  // Used by V3's time-aware call buttons (Sydney time). [Need update from Oliver: exact hours]
+  businessHours: { days: [1, 2, 3, 4, 5], open: 7, close: 17, verify: true },
   abn: { value: 'ABN XX XXX XXX XXX', verify: true },
   serviceArea: ['Central Coast', 'Greater Sydney', 'Wollongong', 'Blue Mountains'],
   warrantyMonths: 12,

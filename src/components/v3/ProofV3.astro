@@ -1,0 +1,50 @@
+---
+import Photo from '../Photo.astro';
+import lathe from '../../assets/photos/mazak-lathe.jpg';
+import onsite from '../../assets/photos/welding-onsite.jpg';
+import { site, industries } from '../../data/site';
+---
+<section class="sec proof" id="about" data-gear="D,50,0.5,0.20" data-gear-m="D,50,0.85,0.32" aria-labelledby="proof-h">
+  <div class="wrap">
+    <div class="proof__grid">
+      <div class="proof__media rv">
+        <Photo src={onsite} alt="Alfa Triton welder repairing equipment on site" class="proof__img proof__img--a" widths={[400, 800]} sizes="(min-width: 1024px) 420px, 70vw" badge="Team / workshop photo · update from Oliver" />
+        <Photo src={lathe} alt="Mazak CNC lathe in the Alfa Triton workshop" class="proof__img proof__img--b" widths={[400]} sizes="(min-width: 1024px) 300px, 50vw" badge={false} />
+      </div>
+      <div>
+        <p class="label rv"><b>/</b> Who you'll deal with</p>
+        <h2 id="proof-h" class="split" data-split><span><span>A local workshop,</span></span><span><span style="--i:1" class="hl">not a call centre.</span></span></h2>
+        <p class="lede rv">Australian owned and operated in Western Sydney since {site.founded}. When you call, you talk to the people who measure, make and fit your part.</p>
+        <p class="proof__ind rv"><span class="dim">Trusted by</span> {industries.map((i) => i.title).join(' · ')}</p>
+      </div>
+    </div>
+
+    <figure class="proof__quote rv">
+      <blockquote>“Client testimonial goes here — one specific story: what broke, how fast Alfa Triton responded, the result.”</blockquote>
+      <figcaption>[Name], Maintenance Manager · [Company] <span class="nu">[Need update from Oliver: real quote + permission]</span></figcaption>
+    </figure>
+    <ul class="proof__logos rv" role="list" aria-label="Clients and certifications">
+      {Array.from({ length: 5 }).map((_, i) => <li>Client logo {i + 1}</li>)}
+    </ul>
+    <p class="proof__note"><span class="nu">[Need update from Oliver: client logos (with permission) + certifications, e.g. ISO 9001, welding tickets]</span></p>
+  </div>
+</section>
+
+<style>
+  .proof { border-top: 1px solid var(--line); }
+  .proof__grid { display: grid; gap: 40px; margin-bottom: clamp(48px, 8vw, 80px); }
+  @media (min-width: 1024px) { .proof__grid { grid-template-columns: 1fr 1.1fr; gap: 72px; align-items: center; } }
+  .proof__media { position: relative; min-height: 340px; }
+  @media (min-width: 1024px) { .proof__media { min-height: 460px; } }
+  .proof__media :global(.proof__img) { position: absolute; border-radius: var(--r-lg); box-shadow: 0 30px 60px -20px rgba(0,0,0,0.6); }
+  .proof__media :global(.proof__img--a) { left: 0; top: 0; width: 78%; aspect-ratio: 4 / 3; }
+  .proof__media :global(.proof__img--b) { right: 0; bottom: 0; width: 52%; aspect-ratio: 4 / 3; border: 4px solid var(--bg); }
+  .proof__ind { color: var(--fg); font-size: 0.95rem; line-height: 1.8; margin: 0; }
+  .proof__quote { margin: 0 0 28px; padding: 28px; border-radius: var(--r-lg); background: var(--bg-2); border: 1px dashed var(--line-2); }
+  .proof__quote blockquote { margin: 0 0 16px; font-family: var(--f-display); font-size: clamp(1.2rem, 3vw, 1.6rem); line-height: 1.3; letter-spacing: -0.02em; color: var(--fg-2); }
+  .proof__quote figcaption { font-size: 0.85rem; color: var(--fg-3); }
+  .proof__logos { list-style: none; margin: 0 0 12px; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  @media (min-width: 768px) { .proof__logos { grid-template-columns: repeat(5, 1fr); } }
+  .proof__logos li { height: 64px; display: grid; place-items: center; border: 1px dashed var(--line-2); border-radius: 12px; font-size: 0.75rem; color: var(--fg-3); background: var(--bg); }
+  .proof__note { margin: 0; }
+</style>

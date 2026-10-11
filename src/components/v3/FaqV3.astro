@@ -1,0 +1,40 @@
+---
+import Icon from '../Icon.astro';
+import { faqs } from '../../data/site';
+// Only questions the page doesn't already answer.
+const pick = [
+  faqs[1],
+  { q: 'Do you take small, one-off jobs?', a: 'Yes. We machine single replacement parts and prototypes as well as small, medium and large production runs.' },
+  faqs[4],
+];
+---
+<section class="sec faq" id="faq" data-gear="D,50,0.5,0.20" data-gear-m="D,50,0.85,0.32" aria-labelledby="faq-h">
+  <div class="wrap faq__grid">
+    <div>
+      <p class="label rv"><b>/</b> FAQ</p>
+      <h2 id="faq-h" class="split" data-split><span><span>Straight</span></span><span><span style="--i:1" class="hl">answers.</span></span></h2>
+    </div>
+    <div class="faq__list">
+      {pick.map((f) => (
+        <details class="rv" name="faq">
+          <summary><h3>{f.q}</h3><span aria-hidden="true"><Icon name="plus" /></span></summary>
+          <p>{f.a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+<style>
+  .faq { border-top: 1px solid var(--line); }
+  .faq__grid { display: grid; gap: 28px; }
+  @media (min-width: 1024px) { .faq__grid { grid-template-columns: 0.8fr 1.2fr; gap: 80px; } }
+  details { border-bottom: 1px solid var(--line-2); }
+  details:first-child { border-top: 1px solid var(--line-2); }
+  summary { list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 22px 0; cursor: pointer; }
+  summary::-webkit-details-marker { display: none; }
+  summary h3 { margin: 0; font-family: var(--f-body); font-size: 1.05rem; font-weight: 600; letter-spacing: -0.01em; line-height: 1.4; }
+  summary > span { flex: none; width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line-2); display: grid; place-items: center; transition: transform 0.4s var(--ease), background 0.3s; }
+  summary > span :global(svg) { width: 16px; height: 16px; }
+  details[open] summary > span { transform: rotate(45deg); background: var(--blue); border-color: var(--blue); }
+  details p { color: var(--fg-2); margin: 0 0 22px; max-width: 62ch; }
+</style>

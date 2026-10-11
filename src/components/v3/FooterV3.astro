@@ -1,0 +1,63 @@
+---
+import logo from '../../assets/brand/logo-light.svg?url';
+import Icon from '../Icon.astro';
+import { site } from '../../data/site';
+const year = new Date().getFullYear();
+---
+<footer class="ft" data-gear="27,57,0.45,0.8" data-gear-m="84,47,0.5,0.3" data-final>
+  <div class="wrap">
+    <div class="ft__top">
+      <p class="ft__big">Built in Western Sydney<br /><span class="dim">since {site.founded}.</span></p>
+      <div class="ft__cols">
+        <div>
+          <p class="label">Workshop</p>
+          <p><a href={site.address.mapsUrl} target="_blank" rel="noopener">{site.address.street}<br />{site.address.locality} {site.address.region} {site.address.postcode}</a> <span class="nu">[Need update from Oliver: Clyde or Greenacre?]</span></p>
+        </div>
+        <div>
+          <p class="label">Call</p>
+          <p><a href={`tel:${site.phone.tel}`}>{site.phone.display}</a><br /><a href={`tel:${site.afterHours.tel}`}>24/7 · {site.afterHours.display}</a></p>
+        </div>
+      </div>
+    </div>
+    <div class="ft__bot">
+      <img src={logo} alt={site.name} width="160" height="31" loading="lazy" />
+      <span>© {year} {site.name} · a trading name of {site.legalName}</span>
+      <a href="/privacy/">Privacy</a>
+      <span class="ft__ver">Design: <a href="/">V1</a> · <a href="/v2/">V2</a> · <b>V3</b></span>
+    </div>
+  </div>
+</footer>
+
+<nav class="bar" aria-label="Quick actions" data-bar>
+  <a class="bar__call" href={`tel:${site.phone.tel}`} data-call data-short><Icon name="phone" /><span data-call-label>Call</span></a>
+  <a class="bar__quote" href="#quote">Get a quote <Icon name="arrow" /></a>
+</nav>
+
+<style>
+  .ft { position: relative; background: var(--bg); border-top: 1px solid var(--line); padding: 72px 0 calc(28px + env(safe-area-inset-bottom)); color: var(--fg-2); }
+  .ft a { text-decoration: none; color: var(--fg); }
+  .ft a:hover { color: var(--blue-hi); }
+  .ft__top { display: grid; gap: 40px; padding-bottom: 56px; }
+  @media (min-width: 900px) { .ft__top { grid-template-columns: 1.2fr 1fr; align-items: end; } }
+  .ft__big { font-family: var(--f-display); font-weight: 600; font-size: clamp(2rem, 6vw, 3.6rem); letter-spacing: -0.035em; line-height: 1; color: var(--fg); margin: 0; }
+  .ft__cols { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; font-size: 0.95rem; }
+  .ft__cols .label { margin-bottom: 8px; }
+  .ft__bot { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 0.8rem; }
+  .ft__bot img { width: 130px; margin-right: auto; }
+
+  .bar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 90; display: grid; grid-template-columns: 1fr 1.2fr; gap: 8px;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+    background: rgba(13, 15, 18, 0.9); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-top: 1px solid var(--line);
+    transform: translateY(110%); transition: transform 0.4s var(--ease);
+  }
+  .bar.is-on { transform: none; }
+  .bar a { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; border-radius: 999px; text-decoration: none; font-family: var(--f-display); font-weight: 600; }
+  .bar__call { border: 1px solid var(--line-2); color: var(--fg); }
+  .bar__call :global(svg) { width: 18px; height: 18px; color: var(--blue-hi); }
+  .bar__call.is-after { border-color: rgba(255, 171, 31, 0.5); color: var(--spark); }
+  .bar__call.is-after :global(svg) { color: var(--spark); }
+  .bar__quote { background: var(--grad); color: #fff; }
+  .bar__quote :global(svg) { width: 18px; height: 18px; }
+  @media (min-width: 1024px) { .bar { display: none; } }
+</style>

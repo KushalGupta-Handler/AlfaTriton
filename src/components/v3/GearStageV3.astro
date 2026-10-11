@@ -1,0 +1,140 @@
+---
+/**
+ * Full-page gear train (V3).
+ * Fixed layer that sits ABOVE section backgrounds and BELOW content (.wrap is z 2),
+ * so text and cards always cover it. Every section sets a keyframe with
+ * data-gear / data-gear-m = "x%,y%,scale,opacity"; v3.ts interpolates between them.
+ * Rotation = horizontal rolling travel + page scroll (the page acts as a rack),
+ * so the gear turns for the whole scroll and docks at the screen edge while reading.
+ * A fixed light "glint" is masked by the turning gear so it reads as machined steel.
+ */
+import { gearOutline, spokeCutouts, boreWithKeyway, pitchRadius } from '../../lib/gear';
+
+const big = { teeth: 40, module: 10 };
+const pin = { teeth: 14, module: 10 };
+const R = pitchRadius(big);
+const r = pitchRadius(pin);
+const bigPath = gearOutline(big);
+const pinPath = gearOutline(pin);
+const holes = spokeCutouts(62, 150, 6, 16);
+const pinHoles = spokeCutouts(24, 46, 4, 26);
+const bore = boreWithKeyway(30);
+const pinBore = boreWithKeyway(14);
+const meshAngle = (-145 * Math.PI) / 180;
+const px = Math.cos(meshAngle) * (R + r);
+const py = Math.sin(meshAngle) * (R + r);
+const pitch = Math.PI * big.module;
+const rackStart = -70 * pitch - 0.25 * pitch;
+const rackD = Array.from({ length: 140 }, (_, i) => {
+  const x = rackStart + i * pitch;
+  return `M${x.toFixed(1)} ${R + 12.5} L${(x + 0.12 * pitch).toFixed(1)} ${R - 10} L${(x + 0.38 * pitch).toFixed(1)} ${R - 10} L${(x + 0.5 * pitch).toFixed(1)} ${R + 12.5}`;
+}).join(' ');
+const BIG_PHASE = 1.89;
+const PIN_PHASE = 14.69;
+---
+<div class="gs" aria-hidden="true" data-gs data-r={R} data-pr={r} data-pitch={pitch} data-big-phase={BIG_PHASE} data-pin-phase={PIN_PHASE}>
+  <div class="gs__train" data-gs-train>
+    <svg class="gs__svg" viewBox="-560 -440 1120 900" fill="none">
+      <defs>
+        <path id="v3-big" d={bigPath} />
+        <path id="v3-pin" d={pinPath} />
+        <linearGradient id="v3-glint" gradientUnits="userSpaceOnUse" x1="-260" y1="-260" x2="260" y2="260">
+          <stop offset="0.28" stop-color="#fff" stop-opacity="0" />
+          <stop offset="0.42" stop-color="#fff" stop-opacity="0.22" />
+          <stop offset="0.5" stop-color="#fff" stop-opacity="0.04" />
+          <stop offset="0.58" stop-color="#fff" stop-opacity="0.12" />
+          <stop offset="0.7" stop-color="#fff" stop-opacity="0" />
+        </linearGradient>
+        <radialGradient id="v3-body" cx="0" cy="0" r={R + 10} gradientUnits="userSpaceOnUse">
+          <stop offset="0.3" stop-color="currentColor" stop-opacity="0.02" />
+          <stop offset="1" stop-color="currentColor" stop-opacity="0.1" />
+        </radialGradient>
+        <mask id="v3-gear-mask" maskUnits="userSpaceOnUse" x="-560" y="-440" width="1120" height="900">
+          <g data-gs-big-mask transform={`rotate(${BIG_PHASE})`}>
+            <use href="#v3-big" fill="#fff" />
+            <path d={holes} fill="#000" />
+            <path d={bore} fill="#000" />
+          </g>
+          <g transform={`translate(${px.toFixed(2)} ${py.toFixed(2)})`}>
+            <g data-gs-pin-mask transform={`rotate(${PIN_PHASE})`}>
+              <use href="#v3-pin" fill="#fff" />
+              <path d={pinHoles} fill="#000" />
+            </g>
+          </g>
+        </mask>
+        <linearGradient id="v3-rack-fade" gradientUnits="userSpaceOnUse" x1="-720" y1="0" x2="720" y2="0">
+          <stop offset="0" stop-color="#fff" stop-opacity="0" />
+          <stop offset="0.3" stop-color="#fff" />
+          <stop offset="0.7" stop-color="#fff" />
+          <stop offset="1" stop-color="#fff" stop-opacity="0" />
+        </linearGradient>
+        <mask id="v3-rack-mask" maskUnits="userSpaceOnUse" x="-720" y="-500" width="1440" height="1000">
+          <rect x="-720" y="-500" width="1440" height="1000" fill="url(#v3-rack-fade)" />
+        </mask>
+      </defs>
+
+      <!-- Horizontal rack: only in the hero (faded out by --rack) -->
+      <g class="gs__rack" mask="url(#v3-rack-mask)">
+        <g data-gs-rack>
+          <path d={`M-2300 ${R + 12.5} H2300`} stroke="currentColor" stroke-width="1" />
+          <path d={rackD} stroke="currentColor" stroke-width="1" />
+        </g>
+      </g>
+
+      <!-- Big gear -->
+      <g data-gs-big transform={`rotate(${BIG_PHASE})`}>
+        <use href="#v3-big" fill="url(#v3-body)" stroke="currentColor" stroke-width="1.5" />
+        <path d={holes} stroke="currentColor" stroke-width="1.1" />
+        <circle r={R} stroke="currentColor" stroke-width="0.6" stroke-dasharray="6 10" />
+        <circle r="96" stroke="currentColor" stroke-width="0.8" />
+        <path d={bore} stroke="currentColor" stroke-width="1.1" />
+        {Array.from({ length: 12 }).map((_, i) => (
+          <path d={`M0 ${-R + 26} V${-R + 40}`} transform={`rotate(${i * 30})`} stroke="currentColor" stroke-width="1.2" />
+        ))}
+      </g>
+
+      <!-- Pinion -->
+      <g transform={`translate(${px.toFixed(2)} ${py.toFixed(2)})`}>
+        <g data-gs-pin transform={`rotate(${PIN_PHASE})`}>
+          <use href="#v3-pin" fill="url(#v3-body)" stroke="currentColor" stroke-width="1.3" />
+          <path d={pinHoles} stroke="currentColor" stroke-width="1" />
+          <path d={pinBore} stroke="currentColor" stroke-width="1" />
+        </g>
+      </g>
+
+      <!-- Fixed light sweep, clipped to the turning gears = machined-steel glint -->
+      <rect class="gs__glint" x="-560" y="-440" width="1120" height="900" fill="url(#v3-glint)" mask="url(#v3-gear-mask)" />
+    </svg>
+  </div>
+  <!-- Vertical rack at the screen edge: the page "drives" the docked gear -->
+  <div class="gs__vrack" data-gs-vrack></div>
+</div>
+
+<style>
+  .gs { position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
+  .gs__train {
+    --x: 74; --y: 46; --s: 1; --o: 1; --rack: 1;
+    position: absolute; left: 0; top: 0;
+    width: min(150vw, 1100px); aspect-ratio: 1120 / 900;
+    transform: translate(calc(var(--x) * 1vw - 50%), calc(var(--y) * 1vh - 49%)) scale(var(--s));
+    opacity: var(--o); color: var(--blue-hi); will-change: transform, opacity;
+    transition: color 0.6s var(--ease);
+  }
+  @media (min-width: 1024px) { .gs__train { width: min(92vw, 1180px); } }
+  .gs[data-tone='paper'] .gs__train { color: var(--blue-lo); }
+  .gs__svg { width: 100%; height: 100%; overflow: visible; }
+  .gs__rack { opacity: calc(var(--rack) * 0.55); }
+  .gs[data-tone='paper'] .gs__glint { opacity: 0.4; }
+
+  .gs__vrack {
+    --pitch: 30px; --off: 0px; --vo: 0;
+    position: absolute; top: 0; bottom: 0; right: 0; width: 14px; opacity: var(--vo);
+    color: var(--blue-hi); display: none;
+    background:
+      linear-gradient(currentColor, currentColor) right 9px top 0 / 1px 100% no-repeat,
+      repeating-linear-gradient(180deg, transparent 0, transparent calc(var(--pitch) * 0.5), currentColor calc(var(--pitch) * 0.5), currentColor calc(var(--pitch) * 0.5 + 1px), transparent calc(var(--pitch) * 0.5 + 1px), transparent var(--pitch)) right 9px top var(--off) / 6px 100% repeat-y;
+    mask-image: linear-gradient(transparent, #000 15%, #000 85%, transparent);
+  }
+  @media (min-width: 1024px) { .gs__vrack { display: block; } }
+  .gs[data-tone='paper'] .gs__vrack { color: var(--blue-lo); }
+</style>

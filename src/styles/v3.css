@@ -1,0 +1,139 @@
+/* =========================================================
+   Alfa Triton V3 — "Machined graphite", full-page gear train
+   Fewer words, bigger type, monospaced technical labels.
+   ========================================================= */
+:root {
+  --bg: #0d0f12;
+  --bg-2: #13161a;
+  --bg-3: #1a1e23;
+  --line: rgba(255, 255, 255, 0.09);
+  --line-2: rgba(255, 255, 255, 0.16);
+  --fg: #eef1f4;
+  --fg-2: #a9b2bc;
+  --fg-3: #6f7983;
+
+  --paper: #f3f2ee;
+  --paper-2: #e8e6df;
+  --ink: #111316;
+  --ink-2: #4c535b;
+  --paper-line: rgba(17, 19, 22, 0.12);
+
+  --blue: #1b9fd9;
+  --blue-hi: #48c1f0;
+  --blue-lo: #0a5e8c;
+  --grad: linear-gradient(135deg, #0a5e8c 0%, #1b9fd9 60%, #48c1f0 100%);
+  --spark: #ffab1f;
+  --ok: #33c27f;
+
+  --f-display: 'Inter Tight Variable', 'Inter Tight', 'Inter Variable', system-ui, sans-serif;
+  --f-body: 'Inter Variable', Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --f-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --gutter: 20px;
+  --maxw: 1240px;
+  --sec: clamp(88px, 16vw, 168px);
+  --r: 14px;
+  --r-lg: 22px;
+  --ease: cubic-bezier(0.22, 0.8, 0.2, 1);
+  --header-h: 64px;
+  --bar-h: 72px;
+}
+@media (min-width: 768px) { :root { --gutter: 40px; --header-h: 72px; } }
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; overflow-x: clip; scroll-behavior: smooth; scroll-padding-top: calc(var(--header-h) + 16px); }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font-family: var(--f-body); font-size: 1rem; line-height: 1.6;
+  -webkit-font-smoothing: antialiased; overflow-x: clip;
+  padding-bottom: var(--bar-h);
+}
+@media (min-width: 1024px) { body { padding-bottom: 0; } }
+img, svg, video { display: block; max-width: 100%; height: auto; }
+a { color: inherit; }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--blue-hi); outline-offset: 3px; border-radius: 6px; }
+::selection { background: var(--blue); color: #fff; }
+
+h1, h2, h3 { font-family: var(--f-display); font-weight: 600; letter-spacing: -0.035em; line-height: 0.98; margin: 0 0 0.4em; text-wrap: balance; }
+h2 { font-size: clamp(2.4rem, 8.5vw, 5.4rem); }
+h3 { font-size: clamp(1.35rem, 3.6vw, 1.75rem); letter-spacing: -0.02em; line-height: 1.1; }
+p { margin: 0 0 1em; text-wrap: pretty; }
+
+.wrap { position: relative; z-index: 2; width: 100%; max-width: var(--maxw); margin-inline: auto; padding-inline: var(--gutter); }
+.wrap > * { min-width: 0; }
+/* Layering contract for the full-page gear:
+   section backgrounds (no stacking context) < gear stage (fixed, z 1) < .wrap content (z 2).
+   Don't give .sec a z-index, transform, filter or opacity < 1. */
+.sec { padding-block: var(--sec); position: relative; }
+.sec--paper { background: var(--paper); color: var(--ink); }
+.sec--paper ::selection { color: #fff; }
+
+/* Mono technical label: "/ 01 — SERVICES" */
+.label {
+  display: inline-flex; align-items: center; gap: 10px; margin-bottom: 22px;
+  font-family: var(--f-mono); font-size: 0.75rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--fg-2);
+}
+.label b { color: var(--blue-hi); font-weight: 500; }
+.sec--paper .label { color: var(--ink-2); }
+.sec--paper .label b { color: var(--blue-lo); }
+.lede { font-size: clamp(1.05rem, 2.4vw, 1.3rem); color: var(--fg-2); max-width: 46ch; }
+.sec--paper .lede { color: var(--ink-2); }
+.hl { color: var(--blue-hi); }
+.sec--paper .hl { color: var(--blue-lo); }
+.dim { color: var(--fg-3); }
+
+/* Buttons */
+.b {
+  --bb: var(--grad);
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 54px; padding: 0 26px; border: 0; border-radius: 999px; cursor: pointer;
+  background: var(--bb); color: #fff; text-decoration: none; white-space: nowrap;
+  font-family: var(--f-display); font-weight: 600; font-size: 1.02rem; letter-spacing: -0.01em;
+  transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease), background 0.25s;
+  box-shadow: 0 8px 30px -8px rgba(27, 159, 217, 0.6);
+}
+.b:hover { transform: translateY(-2px); box-shadow: 0 14px 36px -10px rgba(27, 159, 217, 0.75); }
+.b svg { width: 18px; height: 18px; flex: none; transition: transform 0.25s var(--ease); }
+.b:hover svg { transform: translateX(3px); }
+.b--line { --bb: transparent; box-shadow: inset 0 0 0 1.5px var(--line-2); color: var(--fg); }
+.b--line:hover { box-shadow: inset 0 0 0 1.5px var(--fg); }
+.sec--paper .b--line { color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--paper-line); }
+.b--spark { --bb: var(--spark); color: #1a1205; box-shadow: 0 8px 30px -8px rgba(255, 171, 31, 0.6); }
+.b--block { width: 100%; }
+.b-row { display: flex; flex-wrap: wrap; gap: 12px; }
+
+.pulse { position: relative; width: 8px; height: 8px; border-radius: 50%; background: var(--ok); flex: none; }
+.pulse::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: inherit; animation: ping 1.8s var(--ease) infinite; }
+@keyframes ping { to { transform: scale(3); opacity: 0; } }
+
+/* Review markers (shared language with v1) */
+.nu {
+  display: inline; font-family: var(--f-mono); font-size: 0.7rem; font-weight: 500; letter-spacing: 0; text-transform: none;
+  color: #ffd68a; background: rgba(255, 171, 31, 0.12); border: 1px dashed rgba(255, 171, 31, 0.6);
+  padding: 1px 6px; border-radius: 4px; -webkit-box-decoration-break: clone; box-decoration-break: clone; vertical-align: middle;
+}
+.sec--paper .nu { color: #7a4b00; background: #fff1cf; border-color: #d99a12; }
+.img-badge {
+  position: absolute; top: 12px; left: 12px; z-index: 3; display: inline-flex; align-items: center; gap: 6px;
+  font: 500 0.68rem/1.2 var(--f-mono); color: #1a1205; background: var(--spark);
+  padding: 5px 9px; border-radius: 999px; pointer-events: none;
+}
+.img-badge svg { width: 12px; height: 12px; }
+
+/* Reveal */
+.rv { opacity: 0; transform: translateY(28px); transition: opacity 0.9s var(--ease), transform 0.9s var(--ease); transition-delay: var(--d, 0s); }
+.rv.in { opacity: 1; transform: none; }
+.no-js .rv { opacity: 1; transform: none; }
+/* Line-by-line headline reveal */
+.split > span { display: block; overflow: hidden; }
+.split > span > span { display: block; transform: translateY(105%); transition: transform 1s var(--ease); transition-delay: calc(var(--i, 0) * 0.08s); }
+.split.in > span > span, .no-js .split > span > span { transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+  .rv, .split > span > span { opacity: 1; transform: none; }
+}

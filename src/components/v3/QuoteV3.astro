@@ -1,0 +1,110 @@
+---
+import Icon from '../Icon.astro';
+import { site } from '../../data/site';
+// Cloudflare Turnstile site key (invisible bot check). Leave empty to skip.
+const TURNSTILE_SITE_KEY = ''; // [Need update: dash.cloudflare.com → Turnstile]
+---
+<section class="sec q" id="quote" data-gear="D,50,0.5,0.18" data-gear-m="D,50,0.85,0.3" aria-labelledby="q-h">
+  <div class="wrap q__grid">
+    <div class="q__intro">
+      <p class="label rv"><b>/</b> Get started</p>
+      <h2 id="q-h" class="split" data-split><span><span>Get a price.</span></span><span><span style="--i:1" class="hl">Or just talk to us.</span></span></h2>
+      <p class="lede rv">Two fields is all it takes. We'll call you back, ask the right questions and save you the typing.</p>
+
+      <div class="q__calls rv">
+        <a class="q__call" href={`tel:${site.phone.tel}`}>
+          <span class="q__call-k">Workshop · Mon–Fri</span>
+          <span class="q__call-n">{site.phone.display}</span>
+        </a>
+        <a class="q__call q__call--hot" href={`tel:${site.afterHours.tel}`}>
+          <span class="q__call-k"><span class="pulse" aria-hidden="true"></span> Breakdown · 24/7</span>
+          <span class="q__call-n">{site.afterHours.display}</span>
+          <span class="nu">[Need update from Oliver: confirm 24/7 number]</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="q__card rv">
+      <div class="q__tabs" role="tablist" aria-label="How should we help?">
+        <button type="button" role="tab" aria-selected="true" data-mode="callback">Call me back</button>
+        <button type="button" role="tab" aria-selected="false" data-mode="quote">Quote with photo</button>
+      </div>
+
+      <form class="q__form" action="/api/quote" method="post" enctype="multipart/form-data" novalidate data-q2>
+        <input type="hidden" name="mode" value="callback" data-mode-input />
+        <label class="q__f"><span>Name</span><input name="name" autocomplete="name" required maxlength="80" /></label>
+        <label class="q__f"><span>Phone</span><input name="phone" type="tel" inputmode="tel" autocomplete="tel" required placeholder="04xx xxx xxx" maxlength="20" /></label>
+
+        <div class="q__more" data-quote-only hidden>
+          <label class="q__f"><span>What do you need? <em>optional</em></span><textarea name="message" rows="3" maxlength="1500" placeholder="e.g. 2 × splined shafts, can drop off the worn one"></textarea></label>
+          <label class="q__file">
+            <input type="file" name="file" accept="image/*,.pdf,.dwg,.dxf,.step,.stp" data-file />
+            <span><Icon name="upload" /><span data-file-label>Add a photo or drawing <em>optional</em></span></span>
+          </label>
+          <button type="button" class="q__add" data-add-email>+ Add email for a written quote</button>
+          <label class="q__f" data-email hidden><span>Email</span><input name="email" type="email" autocomplete="email" maxlength="120" /></label>
+        </div>
+
+        <!-- Spam traps: invisible field, fill-time, JS proof, optional Turnstile -->
+        <div class="q__hp" aria-hidden="true"><label>Company website<input name="website" tabindex="-1" autocomplete="off" /></label></div>
+        <input type="hidden" name="ts" data-ts />
+        <input type="hidden" name="proof" data-proof />
+        {TURNSTILE_SITE_KEY && <div class="cf-turnstile" data-sitekey={TURNSTILE_SITE_KEY} data-appearance="interaction-only" data-theme="dark"></div>}
+
+        <button class="b b--block q__submit" type="submit" data-submit-label>Call me back <Icon name="arrow" /></button>
+        <p class="q__fine">We'll call within one business day. <span class="nu">[Need update from Oliver: confirm]</span><br />No sales or marketing enquiries, please.</p>
+        <p class="q__status" role="status" aria-live="polite" data-status></p>
+      </form>
+
+      <div class="q__done" data-done hidden tabindex="-1">
+        <span class="q__tick"><Icon name="check" /></span>
+        <h3>Got it — we'll call you.</h3>
+        <p>If your line is down, don't wait: <a href={`tel:${site.afterHours.tel}`}>{site.afterHours.display}</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{TURNSTILE_SITE_KEY && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
+
+<style>
+  .q { border-top: 1px solid var(--line); background: radial-gradient(120% 80% at 100% 0%, rgba(27,159,217,0.14), transparent 60%), var(--bg); }
+  .q__grid { display: grid; gap: 40px; }
+  @media (min-width: 1024px) { .q__grid { grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; } }
+  .q__calls { display: grid; gap: 12px; margin-top: 28px; }
+  .q__call { display: grid; gap: 4px; padding: 18px 20px; border-radius: var(--r); border: 1px solid var(--line-2); text-decoration: none; transition: border-color 0.2s, background 0.2s; }
+  .q__call:hover { border-color: var(--fg-3); background: rgba(255,255,255,0.03); }
+  .q__call--hot { border-color: rgba(255,171,31,0.45); background: rgba(255,171,31,0.06); }
+  .q__call-k { display: inline-flex; align-items: center; gap: 8px; font: 500 0.72rem/1 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg-2); }
+  .q__call--hot .q__call-k { color: var(--spark); }
+  .q__call-n { font-family: var(--f-display); font-weight: 600; font-size: clamp(1.8rem, 6vw, 2.4rem); letter-spacing: -0.03em; }
+
+  .q__card { background: var(--paper); color: var(--ink); border-radius: var(--r-lg); padding: 10px 20px 24px; box-shadow: 0 40px 80px -30px rgba(0,0,0,0.6); }
+  @media (min-width: 768px) { .q__card { padding: 12px 32px 32px; } }
+  .q__tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; margin: 10px 0 24px; background: var(--paper-2); border-radius: 999px; }
+  .q__tabs button { min-height: 46px; border: 0; border-radius: 999px; background: none; cursor: pointer; font-family: var(--f-display); font-weight: 600; font-size: 0.95rem; color: var(--ink-2); transition: background 0.25s, color 0.25s, box-shadow 0.25s; }
+  .q__tabs button[aria-selected='true'] { background: #fff; color: var(--ink); box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+  .q__f { display: grid; gap: 6px; margin-bottom: 14px; font-size: 0.85rem; font-weight: 600; }
+  .q__f em, .q__file em { font-style: normal; font-weight: 400; color: var(--ink-2); }
+  .q__f input, .q__f textarea { width: 100%; min-height: 54px; padding: 14px 16px; font-size: 1.05rem; font-weight: 400; border: 1.5px solid var(--paper-line); border-radius: 12px; background: #fff; transition: border-color 0.2s, box-shadow 0.2s; }
+  .q__f textarea { min-height: 96px; resize: vertical; }
+  .q__f input:focus, .q__f textarea:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 4px rgba(27,159,217,0.15); }
+  .q__f [aria-invalid='true'] { border-color: #e5484d; }
+  .q__more { animation: grow 0.4s var(--ease); }
+  @keyframes grow { from { opacity: 0; transform: translateY(-6px); } }
+  .q__file { position: relative; display: block; margin-bottom: 12px; }
+  .q__file input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .q__file > span { display: flex; align-items: center; gap: 12px; min-height: 54px; padding: 12px 16px; border: 1.5px dashed var(--paper-line); border-radius: 12px; font-size: 0.92rem; font-weight: 600; transition: border-color 0.2s, background 0.2s; }
+  .q__file:hover > span, .q__file:focus-within > span { border-color: var(--blue); background: #fff; }
+  .q__file :global(svg) { width: 22px; height: 22px; color: var(--blue-lo); flex: none; }
+  .q__add { background: none; border: 0; padding: 6px 0 14px; color: var(--blue-lo); font-weight: 600; font-size: 0.9rem; cursor: pointer; }
+  .q__hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .q__submit { margin-top: 6px; min-height: 58px; font-size: 1.08rem; }
+  .q__card .nu { color: #7a4b00; background: #fff1cf; border-color: #d99a12; }
+  .q__fine { font-size: 0.8rem; color: var(--ink-2); margin: 14px 0 0; text-align: center; }
+  .q__status { margin: 10px 0 0; font-size: 0.9rem; color: #c62828; text-align: center; min-height: 1.2em; }
+  .q__done { text-align: center; padding: 40px 8px; }
+  .q__tick { display: inline-grid; place-items: center; width: 72px; height: 72px; border-radius: 50%; background: var(--ok); color: #fff; margin-bottom: 18px; animation: pop 0.5s var(--ease); }
+  .q__tick :global(svg) { width: 34px; height: 34px; }
+  @keyframes pop { from { transform: scale(0.4); opacity: 0; } }
+</style>
