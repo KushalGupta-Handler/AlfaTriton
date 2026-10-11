@@ -35,7 +35,9 @@ const links = [
   .hd__nav { display: none; gap: 4px; font-size: 0.92rem; }
   .hd__nav a { text-decoration: none; color: var(--fg-2); padding: 8px 14px; border-radius: 999px; transition: color 0.2s, background 0.2s; }
   .hd__nav a:hover { color: var(--fg); background: rgba(255, 255, 255, 0.06); }
-  .hd__act { display: flex; align-items: center; gap: 8px; }
+  .hd__act { display: flex; align-items: center; gap: 8px; opacity: 0; visibility: hidden; transform: translateY(-6px); transition: opacity 0.3s var(--ease), transform 0.3s var(--ease), visibility 0s linear 0.3s; }
+  .hd.has-cta .hd__act { opacity: 1; visibility: visible; transform: none; transition: opacity 0.3s var(--ease), transform 0.3s var(--ease); }
+  :global(.no-js) .hd__act { opacity: 1; visibility: visible; transform: none; }
   .hd__tel { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; height: 44px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line-2); font-family: var(--f-mono); font-size: 0.78rem; color: var(--fg-2); }
   .hd__tel b { color: var(--fg); font-weight: 600; }
   .hd__tel-txt { display: none; }

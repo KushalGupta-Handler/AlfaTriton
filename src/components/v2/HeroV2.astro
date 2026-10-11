@@ -6,21 +6,15 @@ import { site } from '../../data/site';
 const videoSrc: string | null = null;
 const lines = ['We keep', 'production lines', 'running.'];
 ---
-<section class="hero" data-gear="77,44,0.92,1" data-gear-m="66,21,0.72,1" data-hero aria-label="Introduction">
+<section class="hero" data-gear="77,44,0.92,1" data-gear-m="66,24,0.72,1" data-hero aria-label="Introduction">
   {videoSrc && <video class="hero__video" data-hero-video src={videoSrc} muted playsinline preload="auto"></video>}
-  {!videoSrc && (
-    <span class="img-badge hero__badge">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M3 7h3l2-3h8l2 3h3v13H3z"/><circle cx="12" cy="13" r="4"/></svg>
-      Higgsfield video slot
-    </span>
-  )}
   <div class="wrap hero__in">
     <p class="label"><b>/</b> Est. {site.founded} — Clyde, Western Sydney</p>
     <h1 class="hero__h split" data-split>
       {lines.map((l, i) => <span><span style={`--i:${i}`} class:list={{ hl: i === 1 }}>{l}</span></span>)}
     </h1>
     <p class="lede hero__lede">CNC machining, gear cutting and stainless fabrication — plus a 24/7 crew when your line goes down.</p>
-    <div class="b-row hero__cta">
+    <div class="b-row hero__cta" data-hero-cta>
       <a class="b" href="#quote">Get a quote <Icon name="arrow" /></a>
       <a class="b b--line" href={`tel:${site.afterHours.tel}`}><span class="pulse" aria-hidden="true"></span> Call 24/7</a>
     </div>
@@ -35,7 +29,6 @@ const lines = ['We keep', 'production lines', 'running.'];
 <style>
   .hero { position: relative; min-height: 100svh; display: flex; flex-direction: column; justify-content: flex-end; padding-top: calc(var(--header-h) + 24px); }
   .hero__video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.55; z-index: -1; }
-  .hero__badge { top: calc(var(--header-h) + 12px); left: var(--gutter); }
   .hero__in { position: relative; padding-bottom: 28px; }
   .hero__h { font-size: clamp(2.6rem, 11.6vw, 7.4rem); line-height: 0.94; letter-spacing: -0.042em; margin-bottom: 22px; }
   .hero__lede { margin-bottom: 28px; }

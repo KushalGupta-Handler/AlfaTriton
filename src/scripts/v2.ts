@@ -10,18 +10,27 @@ const smooth = (t: number) => t * t * (3 - 2 * t);
 const hd = $('[data-hd]');
 const bar = $('[data-bar]');
 const quote = $('#quote');
+const heroCta = $('[data-hero-cta]');
 let quoteVisible = false;
+let ctaGone = !heroCta; // hero buttons scrolled out of view
 let lastY = window.scrollY;
-if (quote) new IntersectionObserver(([e]) => { quoteVisible = e.isIntersecting; }, { threshold: 0.1 }).observe(quote);
+if (quote) new IntersectionObserver(([e]) => { quoteVisible = e.isIntersecting; chrome(); }, { threshold: 0.1 }).observe(quote);
+if (heroCta) new IntersectionObserver(([e]) => { ctaGone = !e.isIntersecting && e.boundingClientRect.top < 0; chrome(); }, { threshold: 0 }).observe(heroCta);
 
 function chrome() {
   const y = window.scrollY;
-  const vh = window.innerHeight;
+  const dy = y - lastY;
+  const focusInHeader = !!document.activeElement?.closest('[data-hd]');
   hd?.classList.toggle('is-solid', y > 40);
-  hd?.classList.toggle('is-hidden', y > vh && y > lastY + 4 && !document.activeElement?.closest('[data-hd]'));
-  if (y < lastY - 4) hd?.classList.remove('is-hidden');
-  bar?.classList.toggle('is-on', y > vh * 0.7 && !quoteVisible);
-  lastY = y;
+  // Header buttons only exist once the hero's own buttons are gone.
+  hd?.classList.toggle('has-cta', ctaGone);
+  // Past the hero buttons: hide on scroll down, reveal on scroll up.
+  if (ctaGone && dy > 4 && !focusInHeader) hd?.classList.add('is-hidden');
+  else if (dy < -4 || !ctaGone) hd?.classList.remove('is-hidden');
+  // Bottom bar (mobile) covers scroll-down; the header covers scroll-up — never both.
+  const headerShowingCta = ctaGone && !hd?.classList.contains('is-hidden');
+  bar?.classList.toggle('is-on', ctaGone && !quoteVisible && !headerShowingCta);
+  if (Math.abs(dy) > 4) lastY = y;
 }
 window.addEventListener('scroll', chrome, { passive: true });
 chrome();
