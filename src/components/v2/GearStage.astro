@@ -1,0 +1,113 @@
+---
+/**
+ * Fixed-feeling gear train that "rolls" across the first three sections.
+ * Lives inside .gz (gear zone). Position/scale/opacity keyframes are set per
+ * section with data-gear="x,y,scale,opacity" (x/y in viewport %, see v2.ts).
+ * Rotation is derived from horizontal travel (pure rolling: θ = Δx / r),
+ * so the gear genuinely rolls along the rack instead of spinning in place.
+ */
+import { gearOutline, spokeCutouts, boreWithKeyway, pitchRadius } from '../../lib/gear';
+
+const big = { teeth: 40, module: 10 };
+const pin = { teeth: 14, module: 10 };
+const R = pitchRadius(big); // 200
+const r = pitchRadius(pin); // 70
+const bigPath = gearOutline(big);
+const pinPath = gearOutline(pin);
+const holes = spokeCutouts(62, 150, 6, 16);
+const pinHoles = spokeCutouts(24, 46, 4, 26);
+const bore = boreWithKeyway(30);
+const pinBore = boreWithKeyway(14);
+// Pinion sits up-left, meshing at the pitch circles.
+const meshAngle = (-145 * Math.PI) / 180;
+const px = Math.cos(meshAngle) * (R + r);
+const py = Math.sin(meshAngle) * (R + r);
+// Rack: straight toothed bar tangent to the big gear's pitch circle.
+const pitch = Math.PI * big.module; // circular pitch = rack tooth spacing
+const rackStart = -70 * pitch - 0.25 * pitch; // puts a rack tooth centre under the gear
+const rackD = Array.from({ length: 140 }, (_, i) => {
+  const x = rackStart + i * pitch;
+  return `M${x.toFixed(1)} ${R + 12.5} L${(x + 0.12 * pitch).toFixed(1)} ${R - 10} L${(x + 0.38 * pitch).toFixed(1)} ${R - 10} L${(x + 0.5 * pitch).toFixed(1)} ${R + 12.5}`;
+}).join(' ');
+// Static phase offsets so teeth interlock (degrees), applied by v2.ts.
+const BIG_PHASE = 1.89;
+const PIN_PHASE = 14.69;
+---
+<div class="gs" aria-hidden="true" data-gs data-r={R} data-pr={r} data-big-phase={BIG_PHASE} data-pin-phase={PIN_PHASE}>
+  <div class="gs__train" data-gs-train>
+    <svg class="gs__svg" viewBox="-560 -440 1120 900" fill="none">
+      <!-- Rack (moves opposite so teeth stay meshed while the gear rolls) -->
+      <defs>
+        <linearGradient id="rackFade" gradientUnits="userSpaceOnUse" x1="-720" y1="0" x2="720" y2="0">
+          <stop offset="0" stop-color="#fff" stop-opacity="0" />
+          <stop offset="0.3" stop-color="#fff" stop-opacity="1" />
+          <stop offset="0.7" stop-color="#fff" stop-opacity="1" />
+          <stop offset="1" stop-color="#fff" stop-opacity="0" />
+        </linearGradient>
+        <mask id="rackMask" maskUnits="userSpaceOnUse" x="-720" y="-500" width="1440" height="1000">
+          <rect x="-720" y="-500" width="1440" height="1000" fill="url(#rackFade)" />
+        </mask>
+      </defs>
+      <g mask="url(#rackMask)">
+      <g class="gs__rack" data-gs-rack>
+        <path d={`M-2300 ${R + 12.5} H2300`} stroke="currentColor" stroke-width="1" />
+        <path d={rackD} stroke="currentColor" stroke-width="1" />
+        <path d={`M-2300 ${R + 40} H2300`} stroke="currentColor" stroke-width="0.6" stroke-dasharray="2 8" />
+      </g>
+      </g>
+
+      <!-- Big gear -->
+      <g data-gs-big transform={`rotate(${BIG_PHASE})`}>
+        <circle r={R + 10} class="gs__glow" />
+        <path d={bigPath} class="gs__body" />
+        <path d={holes} class="gs__cut" />
+        <circle r={R} stroke="currentColor" stroke-width="0.6" stroke-dasharray="6 10" />
+        <circle r="96" stroke="currentColor" stroke-width="0.8" />
+        <path d={bore} class="gs__cut" />
+        {Array.from({ length: 12 }).map((_, i) => (
+          <path d={`M0 ${-R + 26} V${-R + 40}`} transform={`rotate(${i * 30})`} stroke="currentColor" stroke-width="1.2" />
+        ))}
+      </g>
+
+      <!-- Pinion -->
+      <g transform={`translate(${px.toFixed(2)} ${py.toFixed(2)})`}>
+        <g data-gs-pin transform={`rotate(${PIN_PHASE})`}>
+          <path d={pinPath} class="gs__body" />
+          <path d={pinHoles} class="gs__cut" />
+          <circle r={r} stroke="currentColor" stroke-width="0.5" stroke-dasharray="4 8" />
+          <path d={pinBore} class="gs__cut" />
+        </g>
+      </g>
+
+      <!-- Drafting annotations (fade after the hero) -->
+      <g class="gs__notes" data-gs-notes font-family="JetBrains Mono Variable, monospace" font-size="13" fill="currentColor">
+        <path d={`M${R + 60} ${-R - 10} H${R + 90} M${R + 60} ${R + 10} H${R + 90} M${R + 75} ${-R - 10} V${R + 10}`} stroke="currentColor" stroke-width="0.8" fill="none" />
+        <path d={`M${R + 75} ${-R - 10} l-5 12 h10z M${R + 75} ${R + 10} l-5 -12 h10z`} fill="currentColor" stroke="none" />
+        <text x={R + 88} y="-8" transform={`rotate(90 ${R + 88} -8)`} text-anchor="middle">Ø {(R + 10) * 2} · z = {big.teeth}</text>
+        <text x={px - 60} y={py - r - 26}>PINION z = {pin.teeth}</text>
+        <text x={R + 34} y="60">i = {(big.teeth / pin.teeth).toFixed(2)} : 1</text>
+        <path d={`M${R * 0.72} ${R * 0.72} L${R + 30} 70 H${R + 150}`} stroke="currentColor" stroke-width="0.8" fill="none" />
+        <circle cx={R * 0.72} cy={R * 0.72} r="3" />
+      </g>
+    </svg>
+  </div>
+</div>
+
+<style>
+  .gs { position: sticky; top: 0; height: 100svh; margin-bottom: -100svh; z-index: 0; pointer-events: none; overflow: hidden; }
+  .gs__train {
+    --x: 72; --y: 46; --s: 1; --o: 1;
+    position: absolute; left: 0; top: 0;
+    width: min(150vw, 1100px); aspect-ratio: 1120 / 900;
+    transform: translate(calc(var(--x) * 1vw - 50%), calc(var(--y) * 1svh - 49%)) scale(var(--s));
+    opacity: var(--o); color: var(--blue-hi); will-change: transform, opacity;
+  }
+  @media (min-width: 1024px) { .gs__train { width: min(92vw, 1180px); } }
+  .gs__svg { width: 100%; height: 100%; overflow: visible; }
+  .gs__body { fill: rgba(27, 159, 217, 0.05); stroke: currentColor; stroke-width: 1.4; }
+  .gs__cut { fill: var(--bg); stroke: currentColor; stroke-width: 1.1; }
+  .gs__glow { fill: none; stroke: none; }
+  .gs__rack { opacity: 0.55; }
+  .gs__notes { opacity: var(--notes, 1); transition: opacity 0.4s; }
+  :global(.no-js) .gs, :global(.reduced) .gs { position: absolute; height: 100svh; }
+</style>

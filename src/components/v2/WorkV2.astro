@@ -1,0 +1,78 @@
+---
+import { Image } from 'astro:assets';
+import Photo from '../Photo.astro';
+import Icon from '../Icon.astro';
+import before from '../../assets/photos/machine-before.jpg';
+import after from '../../assets/photos/machine-after.jpg';
+import rolls from '../../assets/photos/drive-rolls.jpg';
+import shaft from '../../assets/photos/splined-shaft.jpg';
+import pipework from '../../assets/photos/stainless-pipework.jpg';
+
+const work = [
+  { img: rolls, tag: 'CNC machining', t: 'Knurled drive rolls', d: 'Batch machined from 4140 steel to drawing.' },
+  { img: shaft, tag: 'Reverse engineering', t: 'Splined shaft, remade', d: 'Measured from the worn part, machined as a drop-in replacement.' },
+  { img: pipework, tag: 'Stainless', t: 'Process pipework', d: 'TIG-welded stainless for a production line.' },
+];
+---
+<section class="sec sec--paper work" id="work" aria-labelledby="work-h">
+  <div class="wrap">
+    <div class="work__head">
+      <p class="label rv"><b>/ 03</b> — Work</p>
+      <h2 id="work-h" class="split" data-split><span><span>Restored,</span></span><span><span style="--i:1" class="hl">not replaced.</span></span></h2>
+      <p class="lede rv">Drag the handle. This machine came in tired and left re-machined, rebuilt and re-commissioned — for a fraction of the cost of new.</p>
+    </div>
+
+    <figure class="ba rv" data-ba style="--pos:50%">
+      <span class="img-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M3 7h3l2-3h8l2 3h3v13H3z"/><circle cx="12" cy="13" r="4"/></svg>Hi-res photos · update from Oliver</span>
+      <Image src={after} alt="Machine after restoration by Alfa Triton" widths={[400, 600]} sizes="(min-width: 1024px) 1100px, 100vw" class="ba__img" format="webp" />
+      <div class="ba__before"><Image src={before} alt="The same machine before restoration" widths={[400, 600]} sizes="(min-width: 1024px) 1100px, 100vw" class="ba__img" format="webp" /></div>
+      <span class="ba__tag ba__tag--l">Before</span>
+      <span class="ba__tag ba__tag--r">After</span>
+      <span class="ba__knob" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6-6 6 6 6M15 6l6 6-6 6"/></svg></span>
+      <input type="range" min="0" max="100" value="50" aria-label="Compare before and after restoration" data-ba-range />
+      <figcaption>Strip-down · re-machining · rebuild · paint · commissioning <span class="nu">[Need update from Oliver: client/industry & turnaround]</span></figcaption>
+    </figure>
+
+    <ul class="work__grid" role="list">
+      {work.map((w, i) => (
+        <li class="work__card rv" style={`--d:${i * 0.08}s`}>
+          <Photo src={w.img} alt={`${w.t} — ${w.tag}`} class="work__img" widths={[400, 640]} sizes="(min-width: 1024px) 380px, 80vw" />
+          <p class="work__tag">{w.tag}</p>
+          <h3>{w.t}</h3>
+          <p class="work__d">{w.d}</p>
+        </li>
+      ))}
+    </ul>
+    <p class="work__more rv"><a class="b b--line" href="#quote">Got a similar job? <Icon name="arrow" /></a></p>
+  </div>
+</section>
+
+<style>
+  .work__head { max-width: 760px; margin-bottom: clamp(36px, 6vw, 60px); }
+  .ba { position: relative; margin: 0 0 clamp(56px, 9vw, 96px); border-radius: var(--r-lg); overflow: hidden; aspect-ratio: 4 / 5; background: var(--paper-2); touch-action: pan-y; user-select: none; }
+  @media (min-width: 768px) { .ba { aspect-ratio: 16 / 9; } }
+  .ba :global(.ba__img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .ba__before { position: absolute; inset: 0; clip-path: inset(0 calc(100% - var(--pos)) 0 0); }
+  .ba__before :global(.ba__img) { filter: sepia(0.3) saturate(0.75) contrast(0.95); }
+  .ba::after { content: ''; position: absolute; top: 0; bottom: 0; left: var(--pos); width: 2px; margin-left: -1px; background: #fff; pointer-events: none; }
+  .ba__knob { position: absolute; z-index: 2; top: 50%; left: var(--pos); width: 56px; height: 56px; margin: -28px 0 0 -28px; border-radius: 50%; background: #fff; color: var(--ink); display: grid; place-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.35); pointer-events: none; }
+  .ba__knob svg { width: 24px; height: 24px; }
+  .ba__knob::before { content: ''; position: absolute; inset: -8px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.6); animation: ping 2.4s var(--ease) infinite; }
+  .ba__tag { position: absolute; top: 16px; z-index: 2; font: 500 0.72rem/1 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; padding: 8px 12px; border-radius: 999px; background: rgba(13,15,18,0.75); color: #fff; }
+  .ba__tag--l { left: 16px; top: 52px; }
+  .ba__tag--r { right: 16px; background: var(--blue); }
+  .ba input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; z-index: 3; }
+  .ba figcaption { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; padding: 40px 16px 14px; background: linear-gradient(transparent, rgba(0,0,0,0.7)); color: #fff; font: 500 0.72rem/1.5 var(--f-mono); letter-spacing: 0.04em; }
+
+  .work__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-auto-flow: column; grid-auto-columns: 82%; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); scroll-padding-inline: var(--gutter); }
+  .work__grid::-webkit-scrollbar { display: none; }
+  @media (min-width: 900px) { .work__grid { grid-auto-flow: row; grid-template-columns: repeat(3, 1fr); overflow: visible; margin-inline: 0; padding-inline: 0; gap: 28px; } }
+  .work__card { scroll-snap-align: start; }
+  .work__card :global(.work__img) { aspect-ratio: 4 / 3; border-radius: var(--r); margin-bottom: 18px; background: #fff; }
+  .work__card :global(.work__img img) { transition: transform 0.8s var(--ease); }
+  .work__card:hover :global(.work__img img) { transform: scale(1.04); }
+  .work__tag { font: 500 0.72rem/1 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--blue-lo); margin-bottom: 10px; }
+  .work__card h3 { margin-bottom: 6px; }
+  .work__d { color: var(--ink-2); font-size: 0.95rem; }
+  .work__more { margin: 36px 0 0; }
+</style>

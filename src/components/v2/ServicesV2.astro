@@ -1,0 +1,95 @@
+---
+import Photo from '../Photo.astro';
+import Icon from '../Icon.astro';
+import { services } from '../../data/site';
+import welding from '../../assets/photos/welding-onsite.jpg';
+import milling from '../../assets/photos/cnc-milling.jpg';
+import gear from '../../assets/photos/gear-splined-shaft.jpg';
+import tray from '../../assets/photos/stainless-tray.jpg';
+import weld from '../../assets/photos/weld-detail.jpg';
+import mixer from '../../assets/photos/mixer-cad.jpg';
+import type { ImageMetadata } from 'astro';
+
+const v2: Record<string, { title: string; line: string; tag?: string; img: ImageMetadata }> = {
+  breakdown: { title: 'Breakdown & on-site repair', line: 'Line down? Our crew is on site across Sydney — day or night.', tag: '24/7', img: welding },
+  cnc: { title: 'CNC machining', line: 'Turning and milling, from one-off spares to production runs.', img: milling },
+  gears: { title: 'Gear cutting', line: 'Spur, helical, bevel, worm and splines — up to 2 m diameter.', img: gear },
+  fabrication: { title: 'Stainless fabrication', line: 'Food- and pharma-grade stainless, cut, folded, rolled and finished.', img: tray },
+  welding: { title: 'Welding', line: 'TIG and MIG specialists — in our workshop or at your plant.', img: weld },
+  design: { title: 'Design & reverse engineering', line: 'Worn or obsolete part? We measure it, model it and make it again.', img: mixer },
+};
+---
+<section class="sec svc" id="services" data-gear="12,54,0.78,0.22" data-gear-m="8,72,0.8,0.14" aria-labelledby="svc-h">
+  <div class="wrap">
+    <div class="svc__head">
+      <p class="label rv"><b>/ 01</b> — Services</p>
+      <h2 id="svc-h" class="split" data-split><span><span>Six things we do.</span></span><span><span style="--i:1" class="hl">All in-house.</span></span></h2>
+      <p class="lede rv">One workshop, one team accountable from first measurement to start-up. Tap a service for detail.</p>
+    </div>
+
+    <ol class="svc__list" role="list" data-svc>
+      {services.map((s, i) => {
+        const d = v2[s.id];
+        return (
+          <li class="svc__item rv" style={`--d:${i * 0.05}s`}>
+            <details name="svc">
+              <summary data-preview={i}>
+                <span class="svc__n">{String(i + 1).padStart(2, '0')}</span>
+                <span class="svc__t">
+                  <span class="svc__title">{d.title}{d.tag && <em class="svc__tag">{d.tag}</em>}</span>
+                  <span class="svc__line">{d.line}</span>
+                </span>
+                <span class="svc__plus" aria-hidden="true"><Icon name="plus" /></span>
+              </summary>
+              <div class="svc__body">
+                <Photo src={d.img} alt={`${d.title} — Alfa Triton Engineering`} class="svc__img" widths={[400, 640]} sizes="(min-width: 1024px) 360px, 90vw" />
+                <div>
+                  <ul class="svc__pts" role="list">{s.points.map((p) => <li><Icon name="check" />{p}</li>)}</ul>
+                  <a class="b b--line" href="#quote" data-service={s.formValue}>Quote this <Icon name="arrow" /></a>
+                </div>
+              </div>
+            </details>
+          </li>
+        );
+      })}
+    </ol>
+  </div>
+
+  <!-- Desktop hover preview that follows the cursor -->
+  <div class="svc__float" aria-hidden="true" data-float>
+    {services.map((s, i) => <Photo src={v2[s.id].img} alt="" class="svc__float-img" widths={[400]} sizes="320px" badge={false} />)}
+  </div>
+</section>
+
+<style>
+  .svc { background: transparent; }
+  .svc__head { max-width: 760px; margin-bottom: clamp(36px, 6vw, 64px); }
+  .svc__list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line-2); }
+  .svc__item { border-bottom: 1px solid var(--line-2); }
+  summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: 38px 1fr 40px; gap: 14px; align-items: center; padding: 22px 0; }
+  summary::-webkit-details-marker { display: none; }
+  @media (min-width: 768px) { summary { grid-template-columns: 80px 1fr 48px; padding: 30px 0; } }
+  .svc__n { font-family: var(--f-mono); font-size: 0.78rem; color: var(--fg-3); }
+  .svc__t { display: grid; gap: 4px; }
+  .svc__title { font-family: var(--f-display); font-weight: 600; letter-spacing: -0.03em; font-size: clamp(1.45rem, 4.6vw, 2.6rem); line-height: 1.05; display: inline-flex; align-items: center; gap: 12px; flex-wrap: wrap; transition: color 0.3s, transform 0.4s var(--ease); }
+  .svc__tag { font: 500 0.7rem/1 var(--f-mono); font-style: normal; color: #1a1205; background: var(--spark); padding: 5px 8px; border-radius: 999px; letter-spacing: 0.04em; }
+  .svc__line { color: var(--fg-2); font-size: 0.95rem; }
+  .svc__plus { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line-2); display: grid; place-items: center; transition: transform 0.4s var(--ease), background 0.3s, border-color 0.3s; }
+  .svc__plus :global(svg) { width: 18px; height: 18px; }
+  details[open] .svc__plus { transform: rotate(45deg); background: var(--blue); border-color: var(--blue); }
+  details[open] .svc__title, summary:hover .svc__title { color: var(--blue-hi); }
+  @media (hover: hover) and (min-width: 1024px) { summary:hover .svc__title { transform: translateX(10px); } }
+  .svc__body { display: grid; gap: 20px; padding: 0 0 28px; animation: open 0.5s var(--ease); }
+  @media (min-width: 768px) { .svc__body { grid-template-columns: 340px 1fr; gap: 36px; padding-left: 80px; align-items: center; } }
+  @keyframes open { from { opacity: 0; transform: translateY(-8px); } }
+  .svc__body :global(.svc__img) { aspect-ratio: 16 / 10; border-radius: var(--r); }
+  .svc__pts { list-style: none; padding: 0; margin: 0 0 22px; display: grid; gap: 8px; color: var(--fg-2); }
+  .svc__pts li { display: flex; gap: 10px; }
+  .svc__pts :global(svg) { width: 18px; height: 18px; color: var(--blue-hi); flex: none; margin-top: 3px; }
+
+  .svc__float { position: fixed; left: 0; top: 0; z-index: 5; width: 300px; aspect-ratio: 4 / 3; pointer-events: none; border-radius: var(--r); overflow: hidden; opacity: 0; transform: translate(-50%, -50%) scale(0.9); transition: opacity 0.3s, transform 0.4s var(--ease); display: none; box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
+  @media (hover: hover) and (min-width: 1024px) { .svc__float { display: block; } }
+  .svc__float.on { opacity: 1; }
+  .svc__float :global(.svc__float-img) { position: absolute; inset: 0; opacity: 0; transition: opacity 0.3s; }
+  .svc__float :global(.svc__float-img.on) { opacity: 1; }
+</style>

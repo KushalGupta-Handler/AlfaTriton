@@ -5,6 +5,47 @@ Mobile-first, lead-focused website for **Alfa Triton Engineering** (Alfa Triton 
 - **Stack:** [Astro](https://astro.build) static site · vanilla CSS (design tokens in `src/styles/global.css`) · ~6 KB of JavaScript · PHP form handler
 - **Output:** plain HTML/CSS/JS in `dist/` — uploads to any cPanel host (Havealook) with no server runtime beyond PHP for the form.
 
+## Versions
+
+| URL | Design | Notes |
+|---|---|---|
+| `/` | **V1**: detailed, multi-section | Kept as-is for comparison |
+| `/v2/` | **V2**: "machined graphite", fewer words, rolling gear train, 2-field quote | `noindex` until chosen |
+
+A small **Design V1 / V2** tab on the right edge of both pages switches between them (`src/components/VersionSwitch.astro`; delete it once a version is chosen).
+To make V2 the live homepage: move `src/pages/v2/index.astro` to `src/pages/index.astro`, remove the `noindex` meta in `LayoutV2.astro`, and update the anchors in `vercel.json` redirects.
+
+### V2 highlights
+- **Gear train** (`GearStage.astro` + `src/scripts/v2.ts`): a 40-tooth gear and 14-tooth pinion roll along a rack through the hero, services and process sections. Rotation is derived from travel (θ = Δx / r), so it genuinely rolls; positions are keyframed per section with `data-gear` (desktop) and `data-gear-m` (mobile) as `x%,y%,scale,opacity`.
+- **Services index**: numbered list; tap to expand on mobile, cursor-following photo preview on desktop.
+- **How we work**: 4 steps with timings and a scroll-filled rail.
+- **Before/after**: full-width restoration slider.
+- **Quote**: "Call me back" needs only name + phone; "Quote with photo" adds optional details and one photo (auto-shrunk in the browser). Big tap-to-call numbers sit beside the form so people can skip it entirely.
+
+## Spam protection (Oliver's pain point)
+
+Layered so real customers never notice, and a real lead is never silently dropped:
+
+1. **Less to abuse**: 2 required fields, no free-text required, no email address printed in V2 (scraped emails are a big spam source).
+2. **Honeypot field**: hidden from people; bots fill it and get a fake "success".
+3. **Fill-time trap**: submissions faster than 3 s are discarded.
+4. **Browser proof token**: V2 sets a token at submit time; bots that POST straight to the endpoint don't have it.
+5. **Australian phone check**: on both the client and the server.
+6. **Content scoring**: links, SEO and marketing phrases, and foreign scripts tag the email subject `[Possible spam]` instead of deleting it.
+7. **Rate limit**: 5 per IP per hour.
+8. **Cloudflare Turnstile** (optional, invisible): add the site key in `QuoteV2.astro` / `QuoteForm.astro` and `TURNSTILE_SECRET` in Vercel.
+9. A polite "No sales or marketing enquiries, please" line under the form.
+
+## Vercel
+
+- `vercel.json` sets the framework, the 301s from the old site, and the security headers, and rewrites `/quote.php` → `/api/quote` so the V1 form works too.
+- `api/quote.ts` is a Vercel Function that emails enquiries through [Resend](https://resend.com). In Vercel → Settings → Environment Variables add:
+  - `RESEND_API_KEY` (required)
+  - `QUOTE_TO` (default `sales@alfatriton.com`; comma-separate multiple)
+  - `QUOTE_FROM` (e.g. `Alfa Triton Website <website@alfatriton.com.au>` once the domain is verified in Resend)
+  - `TURNSTILE_SECRET` (optional)
+- `public/quote.php` + `public/.htaccess` remain only for cPanel hosting; Vercel ignores them.
+
 ## Commands
 
 ```bash

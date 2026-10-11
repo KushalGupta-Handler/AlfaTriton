@@ -1,0 +1,56 @@
+---
+import { site, yearsInBusiness, industries } from '../../data/site';
+const stats = [
+  { n: yearsInBusiness, u: 'yrs', l: `In business since ${site.founded}` },
+  { n: 24, u: '/7', l: 'Breakdown crew on call' },
+  { n: 2, u: 'm', l: 'Largest gear we cut' },
+  { n: site.warrantyMonths, u: 'mo', l: 'Warranty on all work' },
+];
+---
+<section class="sec proof" aria-labelledby="proof-h">
+  <div class="wrap">
+    <p class="label rv"><b>/ 04</b> — Why plants call us</p>
+    <h2 id="proof-h" class="split" data-split><span><span>Trusted on the</span></span><span><span style="--i:1" class="hl">factory floor.</span></span></h2>
+
+    <dl class="proof__stats">
+      {stats.map((s, i) => (
+        <div class="rv" style={`--d:${i * 0.08}s`}>
+          <dt class="sr">{s.l}</dt>
+          <dd><span class="proof__n"><span data-count={s.n}>{s.n}</span><small>{s.u}</small></span><span class="proof__l">{s.l}</span></dd>
+        </div>
+      ))}
+    </dl>
+
+    <div class="proof__row">
+      <div class="rv">
+        <p class="label">Industries</p>
+        <ul class="proof__chips" role="list">{industries.map((i) => <li>{i.title}</li>)}</ul>
+      </div>
+      <figure class="proof__quote rv">
+        <blockquote>“Client testimonial goes here — one specific story: what broke, how fast Alfa Triton responded, the result.”</blockquote>
+        <figcaption>[Name], Maintenance Manager · [Company] <span class="nu">[Need update from Oliver: real quote + permission]</span></figcaption>
+      </figure>
+    </div>
+    <p class="proof__logos rv"><span class="nu">[Need update from Oliver: client logos / certifications (ISO, welding tickets)]</span></p>
+  </div>
+</section>
+
+<style>
+  .proof { border-top: 1px solid var(--line); }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .proof__stats { display: grid; grid-template-columns: 1fr 1fr; margin: clamp(36px, 6vw, 64px) 0; border-top: 1px solid var(--line-2); }
+  @media (min-width: 900px) { .proof__stats { grid-template-columns: repeat(4, 1fr); } }
+  .proof__stats > div { padding: 26px 12px 26px 0; border-bottom: 1px solid var(--line-2); }
+  .proof__stats dd { margin: 0; display: grid; gap: 6px; }
+  .proof__n { font-family: var(--f-display); font-weight: 500; font-size: clamp(3rem, 11vw, 5.6rem); line-height: 0.9; letter-spacing: -0.05em; font-variant-numeric: tabular-nums; }
+  .proof__n small { font-size: 0.38em; color: var(--blue-hi); margin-left: 4px; letter-spacing: 0; }
+  .proof__l { color: var(--fg-2); font-size: 0.9rem; }
+  .proof__row { display: grid; gap: 40px; }
+  @media (min-width: 900px) { .proof__row { grid-template-columns: 1fr 1.1fr; gap: 64px; align-items: start; } }
+  .proof__chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .proof__chips li { padding: 10px 16px; border-radius: 999px; border: 1px solid var(--line-2); font-size: 0.92rem; }
+  .proof__quote { margin: 0; padding: 28px; border-radius: var(--r-lg); background: var(--bg-2); border: 1px dashed var(--line-2); }
+  .proof__quote blockquote { margin: 0 0 16px; font-family: var(--f-display); font-size: clamp(1.2rem, 3vw, 1.6rem); line-height: 1.3; letter-spacing: -0.02em; color: var(--fg-2); }
+  .proof__quote figcaption { font-size: 0.85rem; color: var(--fg-3); }
+  .proof__logos { margin-top: 36px; }
+</style>

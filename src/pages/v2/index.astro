@@ -1,0 +1,28 @@
+---
+import LayoutV2 from '../../layouts/LayoutV2.astro';
+import GearStage from '../../components/v2/GearStage.astro';
+import HeroV2 from '../../components/v2/HeroV2.astro';
+import ServicesV2 from '../../components/v2/ServicesV2.astro';
+import ProcessV2 from '../../components/v2/ProcessV2.astro';
+import WorkV2 from '../../components/v2/WorkV2.astro';
+import ProofV2 from '../../components/v2/ProofV2.astro';
+import QuoteV2 from '../../components/v2/QuoteV2.astro';
+import FaqV2 from '../../components/v2/FaqV2.astro';
+---
+<LayoutV2>
+  <!-- Gear zone: the gear train rolls continuously through these three sections -->
+  <div class="gz" data-gz>
+    <GearStage />
+    <HeroV2 />
+    <ServicesV2 />
+    <ProcessV2 />
+  </div>
+  <WorkV2 />
+  <ProofV2 />
+  <QuoteV2 />
+  <FaqV2 />
+</LayoutV2>
+
+<style>
+  .gz { position: relative; isolation: isolate; }
+</style>

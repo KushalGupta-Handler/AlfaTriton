@@ -1,0 +1,46 @@
+---
+import logo from '../../assets/brand/logo-light.svg?url';
+import Icon from '../Icon.astro';
+import { site } from '../../data/site';
+const links = [
+  { href: '#services', label: 'Services' },
+  { href: '#process', label: 'How we work' },
+  { href: '#work', label: 'Work' },
+  { href: '#faq', label: 'FAQ' },
+];
+---
+<header class="hd" data-hd>
+  <div class="wrap hd__in">
+    <a href="/v2/" class="hd__logo" aria-label={`${site.name} home`}><img src={logo} alt={site.name} width="190" height="37" /></a>
+    <nav class="hd__nav" aria-label="Main">
+      {links.map((l) => <a href={l.href}>{l.label}</a>)}
+    </nav>
+    <div class="hd__act">
+      <a class="hd__tel" href={`tel:${site.afterHours.tel}`} aria-label={`Call 24/7 on ${site.afterHours.display}`}>
+        <span class="pulse" aria-hidden="true"></span><span class="hd__tel-txt">24/7 <b>{site.afterHours.display}</b></span><Icon name="phone" class="hd__tel-ic" />
+      </a>
+      <a class="b hd__cta" href="#quote">Get a quote</a>
+    </div>
+  </div>
+</header>
+
+<style>
+  .hd { position: fixed; inset: 0 0 auto; z-index: 100; transition: transform 0.4s var(--ease); }
+  .hd::before { content: ''; position: absolute; inset: 0; z-index: -1; background: rgba(13, 15, 18, 0); border-bottom: 1px solid transparent; transition: background 0.3s, border-color 0.3s; -webkit-backdrop-filter: blur(0); backdrop-filter: blur(0); }
+  .hd.is-solid::before { background: rgba(13, 15, 18, 0.78); border-color: var(--line); -webkit-backdrop-filter: blur(14px) saturate(150%); backdrop-filter: blur(14px) saturate(150%); }
+  .hd.is-hidden { transform: translateY(-100%); }
+  .hd__in { height: var(--header-h); display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .hd__logo img { width: 150px; }
+  @media (min-width: 768px) { .hd__logo img { width: 180px; } }
+  .hd__nav { display: none; gap: 4px; font-size: 0.92rem; }
+  .hd__nav a { text-decoration: none; color: var(--fg-2); padding: 8px 14px; border-radius: 999px; transition: color 0.2s, background 0.2s; }
+  .hd__nav a:hover { color: var(--fg); background: rgba(255, 255, 255, 0.06); }
+  .hd__act { display: flex; align-items: center; gap: 8px; }
+  .hd__tel { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; height: 44px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line-2); font-family: var(--f-mono); font-size: 0.78rem; color: var(--fg-2); }
+  .hd__tel b { color: var(--fg); font-weight: 600; }
+  .hd__tel-txt { display: none; }
+  .hd__tel :global(.hd__tel-ic) { width: 18px; height: 18px; color: var(--spark); }
+  .hd__cta { min-height: 44px; padding: 0 18px; font-size: 0.95rem; }
+  @media (min-width: 640px) { .hd__tel-txt { display: inline; } .hd__tel :global(.hd__tel-ic) { display: none; } }
+  @media (min-width: 1024px) { .hd__nav { display: flex; } }
+</style>

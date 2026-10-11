@@ -6,6 +6,7 @@ import '@fontsource/barlow-condensed/800.css';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import VersionSwitch from '../components/VersionSwitch.astro';
 import { site, services, faqs } from '../data/site';
 
 interface Props {
@@ -111,6 +112,7 @@ const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': grap
       <slot />
     </main>
     <Footer />
+    <VersionSwitch current="v1" />
     <script>
       import '../scripts/main';
     </script>
