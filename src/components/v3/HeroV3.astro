@@ -8,7 +8,7 @@ const lines = ['We keep', 'production lines', 'running.'];
 <section class="hero" data-gear="80,47,0.95,0.95" data-gear-m="84,34,0.95,0.38" data-rack="1" aria-label="Introduction">
   {videoSrc && <video class="hero__video" data-hero-video src={videoSrc} muted playsinline preload="auto"></video>}
   <div class="wrap hero__in">
-    <p class="label"><b>/</b> Est. {site.founded} · Clyde, Western Sydney</p>
+    <p class="label"><b>/</b> Est. {site.founded}</p>
     <h1 class="hero__h split" data-split>
       {lines.map((l, i) => <span><span style={`--i:${i}`} class:list={{ hl: i === 1 }}>{l}</span></span>)}
     </h1>
