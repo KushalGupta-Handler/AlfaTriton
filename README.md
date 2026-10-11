@@ -28,7 +28,7 @@ To make V2 the live homepage: move `src/pages/v2/index.astro` to `src/pages/inde
 ### V3 changes (from the V2 review)
 - **Full-page gear** (`GearStageV3.astro`, `src/scripts/v3.ts`): a fixed layer above section backgrounds and below content (`.wrap` is `z-index: 2`; sections must not create stacking contexts). It turns for the whole scroll, rolling along a rack in the hero, then docks at the right edge with an edge rack driving it (2:1 reduction), recolours on the light section, and settles beside the footer. A fixed light "glint" masked by the turning gear gives the look of machined steel. Use `data-gear="D,…"` to dock a section.
 - **Time-aware call buttons**: in business hours (`site.businessHours`, Sydney time) "Call" dials the workshop; after hours it dials the 24/7 line. [Need update from Oliver: exact hours]
-- **Early proof**: a strip of real job photos right after the hero, and a "Who you'll deal with" section with workshop photos, a testimonial slot and a client/certification logo slot.
+- **Early proof**: the before/after restoration slider straight after the hero (Work below keeps the job cards), and a "Who you'll deal with" section with workshop photos, a testimonial slot and a client/certification logo slot.
 - **Removed**: the stats block (repeated earlier content), the hero RPM/spec strip, the gear annotations, section numbering, repeated FAQs, and the industry "chips" (now a plain text line).
 - The design switcher now shows only near the top of the page, and V3 also links V1/V2 in the footer.
 

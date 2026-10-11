@@ -1,0 +1,47 @@
+---
+import { Image } from 'astro:assets';
+import before from '../../assets/photos/machine-before.jpg';
+import after from '../../assets/photos/machine-after.jpg';
+
+---
+<section class="sec sec--paper work ba-sec" id="restored" data-tone="paper" data-gear="D,50,0.5,0.20" data-gear-m="D,50,0.85,0.4" aria-labelledby="ba-h">
+  <div class="wrap">
+    <div class="work__head">
+      <p class="label rv"><b>/</b> Proof, not promises</p>
+      <h2 id="ba-h" class="split" data-split><span><span>Restored,</span></span><span><span style="--i:1" class="hl">not replaced.</span></span></h2>
+      <p class="lede rv">Drag the handle. This machine came in tired and left re-machined, rebuilt and re-commissioned — for a fraction of the cost of new.</p>
+    </div>
+
+    <figure class="ba rv" data-ba style="--pos:50%">
+      <span class="img-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M3 7h3l2-3h8l2 3h3v13H3z"/><circle cx="12" cy="13" r="4"/></svg>Hi-res photos · update from Oliver</span>
+      <Image src={after} alt="Machine after restoration by Alfa Triton" widths={[400, 600]} sizes="(min-width: 1024px) 1100px, 100vw" class="ba__img" format="webp" />
+      <div class="ba__before"><Image src={before} alt="The same machine before restoration" widths={[400, 600]} sizes="(min-width: 1024px) 1100px, 100vw" class="ba__img" format="webp" /></div>
+      <span class="ba__tag ba__tag--l">Before</span>
+      <span class="ba__tag ba__tag--r">After</span>
+      <span class="ba__knob" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6-6 6 6 6M15 6l6 6-6 6"/></svg></span>
+      <input type="range" min="0" max="100" value="50" aria-label="Compare before and after restoration" data-ba-range />
+      <figcaption>Strip-down · re-machining · rebuild · paint · commissioning <span class="nu">[Need update from Oliver: client/industry & turnaround]</span></figcaption>
+    </figure>
+
+  </div>
+</section>
+
+<style>
+  .work__head { max-width: 760px; margin-bottom: clamp(36px, 6vw, 60px); }
+  .ba { position: relative; margin: 0; border-radius: var(--r-lg); overflow: hidden; aspect-ratio: 4 / 5; background: var(--paper-2); touch-action: pan-y; user-select: none; }
+  @media (min-width: 768px) { .ba { aspect-ratio: 16 / 9; } }
+  .ba :global(.ba__img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .ba__before { position: absolute; inset: 0; clip-path: inset(0 calc(100% - var(--pos)) 0 0); }
+  .ba__before :global(.ba__img) { filter: sepia(0.3) saturate(0.75) contrast(0.95); }
+  .ba::after { content: ''; position: absolute; top: 0; bottom: 0; left: var(--pos); width: 2px; margin-left: -1px; background: #fff; pointer-events: none; }
+  .ba__knob { position: absolute; z-index: 2; top: 50%; left: var(--pos); width: 56px; height: 56px; margin: -28px 0 0 -28px; border-radius: 50%; background: #fff; color: var(--ink); display: grid; place-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.35); pointer-events: none; }
+  .ba__knob svg { width: 24px; height: 24px; }
+  .ba__knob::before { content: ''; position: absolute; inset: -8px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.6); animation: ping 2.4s var(--ease) infinite; }
+  .ba__tag { position: absolute; top: 16px; z-index: 2; font: 500 0.72rem/1 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; padding: 8px 12px; border-radius: 999px; background: rgba(13,15,18,0.75); color: #fff; }
+  .ba__tag--l { left: 16px; top: 52px; }
+  .ba__tag--r { right: 16px; background: var(--blue); }
+  .ba input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; z-index: 3; }
+  .ba figcaption { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; padding: 40px 16px 14px; background: linear-gradient(transparent, rgba(0,0,0,0.7)); color: #fff; font: 500 0.72rem/1.5 var(--f-mono); letter-spacing: 0.04em; }
+
+  @media (min-width: 900px) { .work__grid { grid-auto-flow: row; grid-template-columns: repeat(3, 1fr); overflow: visible; margin-inline: 0; padding-inline: 0; gap: 28px; } }
+</style>
