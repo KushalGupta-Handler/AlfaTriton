@@ -50,13 +50,13 @@ const PIN_PHASE = 14.69;
           <stop offset="1" stop-color="currentColor" stop-opacity="0.1" />
         </radialGradient>
         <mask id="v3-gear-mask" maskUnits="userSpaceOnUse" x="-560" y="-440" width="1120" height="900">
-          <g data-gs-big-mask transform={`rotate(${BIG_PHASE})`}>
+          <g data-gs-big-mask data-rot="big" transform={`rotate(${BIG_PHASE})`}>
             <use href="#v3-big" fill="#fff" />
             <path d={holes} fill="#000" />
             <path d={bore} fill="#000" />
           </g>
           <g transform={`translate(${px.toFixed(2)} ${py.toFixed(2)})`}>
-            <g data-gs-pin-mask transform={`rotate(${PIN_PHASE})`}>
+            <g data-gs-pin-mask data-rot="pin" transform={`rotate(${PIN_PHASE})`}>
               <use href="#v3-pin" fill="#fff" />
               <path d={pinHoles} fill="#000" />
             </g>
@@ -82,7 +82,7 @@ const PIN_PHASE = 14.69;
       </g>
 
       <!-- Big gear -->
-      <g data-gs-big transform={`rotate(${BIG_PHASE})`}>
+      <g data-gs-big data-rot="big" transform={`rotate(${BIG_PHASE})`}>
         <use href="#v3-big" fill="url(#v3-body)" stroke="currentColor" stroke-width="1.5" />
         <path d={holes} stroke="currentColor" stroke-width="1.1" />
         <circle r={R} stroke="currentColor" stroke-width="0.6" stroke-dasharray="6 10" />
@@ -95,7 +95,7 @@ const PIN_PHASE = 14.69;
 
       <!-- Pinion -->
       <g transform={`translate(${px.toFixed(2)} ${py.toFixed(2)})`}>
-        <g data-gs-pin transform={`rotate(${PIN_PHASE})`}>
+        <g data-gs-pin data-rot="pin" transform={`rotate(${PIN_PHASE})`}>
           <use href="#v3-pin" fill="url(#v3-body)" stroke="currentColor" stroke-width="1.3" />
           <path d={pinHoles} stroke="currentColor" stroke-width="1" />
           <path d={pinBore} stroke="currentColor" stroke-width="1" />

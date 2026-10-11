@@ -75,21 +75,30 @@ $$('.rv, .split, .pr__step').forEach((el) => io.observe(el));
 /* ---------------- Full-page gear train ---------------- */
 const stage = $('[data-gs]');
 const train = $('[data-gs-train]');
-const bigG = $('[data-gs-big]');
-const pinG = $('[data-gs-pin]');
-const bigMask = $('[data-gs-big-mask]');
-const pinMask = $('[data-gs-pin-mask]');
+const bigGs = $$('[data-rot="big"]');
+const pinGs = $$('[data-rot="pin"]');
 const rack = $('[data-gs-rack]');
 const vrack = $('[data-gs-vrack]');
 const heroVideo = $<HTMLVideoElement>('[data-hero-video]');
 
-if (stage && train && bigG && pinG && rack) {
+if (stage && train && bigGs.length && pinGs.length && rack) {
   const R = Number(stage.dataset.r);
   const r = Number(stage.dataset.pr);
   const pitch = Number(stage.dataset.pitch);
   const bigPhase = Number(stage.dataset.bigPhase);
   const pinPhase = Number(stage.dataset.pinPhase);
   const sections = $$('[data-gear]');
+  // V4 "design → make → run": drafted on load, exploded parts assemble through the hero.
+  const assembly = stage.dataset.mode === 'assembly';
+  const parts = $$('[data-ex]').map((el) => {
+    const [ex, ey] = (el.dataset.ex || '0,0').split(',').map(Number);
+    return { el, ex, ey };
+  });
+  // Staggered seating windows (fraction of assembly progress): hub, key, pinion.
+  const seat = [[0, 0.7], [0.4, 1], [0.15, 0.85]];
+  const drawStart = performance.now();
+  let drawn = assembly && !reduce ? 0 : 1;
+  let locked = false;
   // 2:1 reduction between page and edge rack: calmer spin, still clearly scroll-driven.
   const DRIVE_RATIO = 0.5;
   // x = 'D' means "docked": gear parked against the right screen edge, meshing with the edge rack.
@@ -121,10 +130,13 @@ if (stage && train && bigG && pinG && rack) {
 
   const target = (): { v: V; tone: string } => {
     const y = window.scrollY;
+    // In assembly mode the train stays put in the hero until it has locked together.
+    const hold = assembly && !reduce ? window.innerHeight * 0.35 : 0;
     for (let i = 0; i < keys.length - 1; i++) {
       const a = keys[i], b = keys[i + 1];
       if (y < b.at) {
-        const t = smooth(clamp((y - a.at) / Math.max(1, b.at - a.at)));
+        const start = i === 0 ? a.at + hold : a.at;
+        const t = smooth(clamp((y - start) / Math.max(1, b.at - start)));
         const va = resolve(a), vb = resolve(b);
         return {
           v: { x: va.x + (vb.x - va.x) * t, y: va.y + (vb.y - va.y) * t, s: va.s + (vb.s - va.s) * t, o: va.o + (vb.o - va.o) * t, rack: va.rack + (vb.rack - va.rack) * t },
@@ -137,7 +149,10 @@ if (stage && train && bigG && pinG && rack) {
   };
 
   measure();
+  const ASSEMBLE_SPAN = 0.35; // fraction of a screen height scrolled to fully assemble
+  const assemblyTarget = () => (assembly && !reduce ? clamp(window.scrollY / (window.innerHeight * ASSEMBLE_SPAN)) : 1);
   const cur: V = { ...target().v };
+  let asm = assemblyTarget();
   let prevXpx = (cur.x / 100) * window.innerWidth;
   let prevScroll = window.scrollY;
   let angle = 0;
@@ -148,14 +163,26 @@ if (stage && train && bigG && pinG && rack) {
     train.style.setProperty('--x', cur.x.toFixed(3));
     train.style.setProperty('--y', cur.y.toFixed(3));
     train.style.setProperty('--s', cur.s.toFixed(4));
-    train.style.setProperty('--o', cur.o.toFixed(3));
+    const mat = smooth(asm);
+    // While it is still a drawing it can be brighter: it sits in the hero's open space.
+    const atRest = clamp(1 - window.scrollY / (window.innerHeight * 0.15));
+    train.style.setProperty('--o', Math.min(1, cur.o * (1 + 0.6 * (1 - mat) * atRest)).toFixed(3));
+    if (assembly) {
+      stage.style.setProperty('--draw', drawn.toFixed(4));
+      stage.style.setProperty('--mat', mat.toFixed(4));
+      parts.forEach((p, i) => {
+        const [a, b] = seat[i] || [0, 1];
+        const k = 1 - smooth(clamp((asm - a) / (b - a)));
+        p.el.setAttribute('transform', `translate(${(p.ex * k).toFixed(2)} ${(p.ey * k).toFixed(2)})`);
+      });
+      if (!locked && asm > 0.985) { locked = true; stage.classList.remove('is-locked'); void stage.offsetWidth; stage.classList.add('is-locked'); }
+      else if (locked && asm < 0.9) { locked = false; stage.classList.remove('is-locked'); }
+    }
     train.style.setProperty('--rack', cur.rack.toFixed(3));
     const big = `rotate(${(angle + bigPhase).toFixed(3)})`;
     const pin = `rotate(${(-angle * (R / r) + pinPhase).toFixed(3)})`;
-    bigG.setAttribute('transform', big);
-    pinG.setAttribute('transform', pin);
-    bigMask?.setAttribute('transform', big);
-    pinMask?.setAttribute('transform', pin);
+    bigGs.forEach((g) => g.setAttribute('transform', big));
+    pinGs.forEach((g) => g.setAttribute('transform', pin));
     if (vrack) {
       // Edge rack: teeth spaced at the gear's circular pitch, moving with the page.
       const pitchPx = pitch * ppuAt(cur.s);
@@ -177,6 +204,12 @@ if (stage && train && bigG && pinG && rack) {
     cur.s += (t.s - cur.s) * k;
     cur.o += (t.o - cur.o) * k;
     cur.rack += (t.rack - cur.rack) * k;
+    asm += (assemblyTarget() - asm) * k;
+    if (drawn < 1) {
+      const d = clamp((now - drawStart - 200) / 1800);
+      drawn = d < 0.5 ? 4 * d * d * d : 1 - Math.pow(-2 * d + 2, 3) / 2;
+      if (d >= 1) drawn = 1;
+    }
 
     const ppu = ppuAt(cur.s);
     const xpx = (cur.x / 100) * window.innerWidth;
@@ -191,7 +224,7 @@ if (stage && train && bigG && pinG && rack) {
 
     if (heroVideo?.duration) heroVideo.currentTime = clamp(window.scrollY / window.innerHeight) * heroVideo.duration;
 
-    const settled = Math.abs(t.x - cur.x) < 0.01 && Math.abs(t.y - cur.y) < 0.01 && Math.abs(t.o - cur.o) < 0.002 && Math.abs(t.s - cur.s) < 0.0005 && Math.abs(t.rack - cur.rack) < 0.002;
+    const settled = Math.abs(t.x - cur.x) < 0.01 && Math.abs(t.y - cur.y) < 0.01 && Math.abs(t.o - cur.o) < 0.002 && Math.abs(t.s - cur.s) < 0.0005 && Math.abs(t.rack - cur.rack) < 0.002 && Math.abs(assemblyTarget() - asm) < 0.001 && drawn >= 1;
     if (settled) { running = false; return; }
     requestAnimationFrame(tick);
   };

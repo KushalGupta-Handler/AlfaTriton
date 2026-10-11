@@ -6,14 +6,17 @@ import '../styles/v3.css';
 import HeaderV3 from '../components/v3/HeaderV3.astro';
 import FooterV3 from '../components/v3/FooterV3.astro';
 import GearStageV3 from '../components/v3/GearStageV3.astro';
+import GearStageV4 from '../components/v3/GearStageV4.astro';
 import VersionSwitch from '../components/VersionSwitch.astro';
 import { site, faqs } from '../data/site';
 
-interface Props { title?: string; description?: string; review?: boolean }
+interface Props { title?: string; description?: string; review?: boolean; gear?: 'roll' | 'assembly'; version?: 'v3' | 'v4' }
 const {
   title = `${site.name} | Precision Engineering & 24/7 Breakdown Repairs, Sydney`,
   description = site.description,
   review = true,
+  gear = 'roll',
+  version = 'v3',
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, site.url).href;
 const ogImage = new URL('/og-image.jpg', site.url).href;
@@ -54,10 +57,10 @@ const jsonLd = JSON.stringify({
   </head>
   <body>
     <HeaderV3 />
-    <GearStageV3 />
+    {gear === 'assembly' ? <GearStageV4 /> : <GearStageV3 />}
     <main id="main"><slot /></main>
     <FooterV3 review={review} />
-    {review && <VersionSwitch current="v3" />}
+    {review && <VersionSwitch current={version} />}
     <script>import '../scripts/v3';</script>
   </body>
 </html>

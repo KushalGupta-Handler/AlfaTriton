@@ -1,0 +1,196 @@
+---
+/**
+ * "Design → Make → Run" gear (V4).
+ * Same fixed layer and layering rules as GearStageV3, plus a story in the hero:
+ *  1. Design — on load every line is drafted in like a CAD pen (--draw 0→1).
+ *  2. Make   — the parts start as an exploded technical drawing and slide together
+ *              as you scroll the hero (--mat 0→1: wireframe → machined steel),
+ *              with a short glow when the key seats.
+ *  3. Run    — the assembled train rolls on and docks at the edge (as V3).
+ * Parts are wrapped: [data-ex] (explode offset, not rotated) > [data-rot] (spins).
+ */
+import { gearOutline, spokeCutouts, boreWithKeyway, pitchRadius } from '../../lib/gear';
+
+const big = { teeth: 40, module: 10 };
+const pin = { teeth: 14, module: 10 };
+const R = pitchRadius(big);
+const r = pitchRadius(pin);
+const bigPath = gearOutline(big);
+const pinPath = gearOutline(pin);
+const holes = spokeCutouts(62, 150, 6, 16);
+const pinHoles = spokeCutouts(24, 46, 4, 26);
+const bore = boreWithKeyway(30);
+const pinBore = boreWithKeyway(14);
+const meshAngle = (-145 * Math.PI) / 180;
+const px = Math.cos(meshAngle) * (R + r);
+const py = Math.sin(meshAngle) * (R + r);
+const pitch = Math.PI * big.module;
+const rackStart = -70 * pitch - 0.25 * pitch;
+const rackD = Array.from({ length: 140 }, (_, i) => {
+  const x = rackStart + i * pitch;
+  return `M${x.toFixed(1)} ${R + 12.5} L${(x + 0.12 * pitch).toFixed(1)} ${R - 10} L${(x + 0.38 * pitch).toFixed(1)} ${R - 10} L${(x + 0.5 * pitch).toFixed(1)} ${R + 12.5}`;
+}).join(' ');
+const BIG_PHASE = 1.89;
+const PIN_PHASE = 14.69;
+// Exploded-view offsets (SVG units), along one assembly axis up-and-left.
+const EX = { hub: [-175, -115], key: [-300, -195], pin: [-135, -35] } as const;
+const keyW = 30 * 0.28 * 2;
+---
+<div class="gs" aria-hidden="true" data-gs data-mode="assembly" data-r={R} data-pr={r} data-pitch={pitch} data-big-phase={BIG_PHASE} data-pin-phase={PIN_PHASE}>
+  <div class="gs__train" data-gs-train>
+    <svg class="gs__svg" viewBox="-560 -440 1120 900" fill="none">
+      <defs>
+        <linearGradient id="v4-glint" gradientUnits="userSpaceOnUse" x1="-260" y1="-260" x2="260" y2="260">
+          <stop offset="0.28" stop-color="#fff" stop-opacity="0" />
+          <stop offset="0.42" stop-color="#fff" stop-opacity="0.24" />
+          <stop offset="0.5" stop-color="#fff" stop-opacity="0.04" />
+          <stop offset="0.58" stop-color="#fff" stop-opacity="0.13" />
+          <stop offset="0.7" stop-color="#fff" stop-opacity="0" />
+        </linearGradient>
+        <radialGradient id="v4-body" cx="0" cy="0" r={R + 10} gradientUnits="userSpaceOnUse">
+          <stop offset="0.3" stop-color="currentColor" stop-opacity="0.03" />
+          <stop offset="1" stop-color="currentColor" stop-opacity="0.14" />
+        </radialGradient>
+        <radialGradient id="v4-flash" cx="0" cy="0" r="220" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="currentColor" stop-opacity="0.55" />
+          <stop offset="1" stop-color="currentColor" stop-opacity="0" />
+        </radialGradient>
+        <mask id="v4-gear-mask" maskUnits="userSpaceOnUse" x="-560" y="-440" width="1120" height="900">
+          <g data-rot="big" transform={`rotate(${BIG_PHASE})`}>
+            <path d={bigPath} fill="#fff" />
+            <path d={holes} fill="#000" />
+            <path d={bore} fill="#000" />
+          </g>
+          <g transform={`translate(${px.toFixed(2)} ${py.toFixed(2)})`}>
+            <g data-rot="pin" transform={`rotate(${PIN_PHASE})`}>
+              <path d={pinPath} fill="#fff" />
+              <path d={pinHoles} fill="#000" />
+            </g>
+          </g>
+        </mask>
+        <linearGradient id="v4-rack-fade" gradientUnits="userSpaceOnUse" x1="-720" y1="0" x2="720" y2="0">
+          <stop offset="0" stop-color="#fff" stop-opacity="0" />
+          <stop offset="0.3" stop-color="#fff" />
+          <stop offset="0.7" stop-color="#fff" />
+          <stop offset="1" stop-color="#fff" stop-opacity="0" />
+        </linearGradient>
+        <mask id="v4-rack-mask" maskUnits="userSpaceOnUse" x="-720" y="-500" width="1440" height="1000">
+          <rect x="-720" y="-500" width="1440" height="1000" fill="url(#v4-rack-fade)" />
+        </mask>
+      </defs>
+
+      <!-- Rack (hero only) -->
+      <g class="gs__rack" mask="url(#v4-rack-mask)">
+        <g data-gs-rack>
+          <path class="dr" pathLength="1" d={`M-2300 ${R + 12.5} H2300`} stroke="currentColor" stroke-width="1" />
+          <path d={rackD} stroke="currentColor" stroke-width="1" class="gs__fade" />
+        </g>
+      </g>
+
+      <!-- Exploded-view assembly axis (dash-dot centre line), fades as parts seat -->
+      <path class="gs__axis" d={`M60 75 L${EX.key[0] - 40} ${EX.key[1] - 52}`} stroke="currentColor" stroke-width="0.8" stroke-dasharray="14 5 2 5" />
+
+      <!-- Lock flash -->
+      <circle class="gs__flash" r="220" fill="url(#v4-flash)" />
+
+      <!-- Rim + web (anchor part) -->
+      <g data-rot="big" transform={`rotate(${BIG_PHASE})`}>
+        <path class="dr gs__body" pathLength="1" d={bigPath} stroke="currentColor" stroke-width="1.5" />
+        <path class="dr" pathLength="1" d={holes} stroke="currentColor" stroke-width="1.1" />
+        <circle class="gs__fade" r={R} stroke="currentColor" stroke-width="0.6" stroke-dasharray="6 10" />
+        {Array.from({ length: 12 }).map((_, i) => (
+          <path class="gs__ticks" d={`M0 ${-R + 26} V${-R + 40}`} transform={`rotate(${i * 30})`} stroke="currentColor" stroke-width="1.2" />
+        ))}
+      </g>
+
+      <!-- Hub + bore -->
+      <g data-ex={EX.hub.join(',')}>
+        <g data-rot="big" transform={`rotate(${BIG_PHASE})`}>
+          <circle class="dr gs__hub" pathLength="1" r="62" stroke="currentColor" stroke-width="1.2" />
+          <circle class="dr" pathLength="1" r="96" stroke="currentColor" stroke-width="0.8" />
+          <path class="dr" pathLength="1" d={bore} stroke="currentColor" stroke-width="1.1" />
+        </g>
+      </g>
+
+      <!-- Key (seats into the keyway last) -->
+      <g data-ex={EX.key.join(',')}>
+        <g data-rot="big" transform={`rotate(${BIG_PHASE})`}>
+          <rect class="dr gs__key" pathLength="1" x={-keyW / 2} y="-42" width={keyW} height="16" rx="1.5" stroke="currentColor" stroke-width="1.1" />
+        </g>
+      </g>
+
+      <!-- Pinion -->
+      <g data-ex={EX.pin.join(',')}>
+        <g transform={`translate(${px.toFixed(2)} ${py.toFixed(2)})`}>
+          <g data-rot="pin" transform={`rotate(${PIN_PHASE})`}>
+            <path class="dr gs__body" pathLength="1" d={pinPath} stroke="currentColor" stroke-width="1.3" />
+            <path class="dr" pathLength="1" d={pinHoles} stroke="currentColor" stroke-width="1" />
+            <path class="dr" pathLength="1" d={pinBore} stroke="currentColor" stroke-width="1" />
+          </g>
+        </g>
+      </g>
+
+      <!-- Drafting annotations (desktop, only while it is still a drawing) -->
+      <g class="gs__notes" font-family="JetBrains Mono Variable, monospace" font-size="13" fill="currentColor">
+        <path class="dr" pathLength="1" d={`M${R + 60} ${-R - 10} H${R + 90} M${R + 60} ${R + 10} H${R + 90} M${R + 75} ${-R - 10} V${R + 10}`} stroke="currentColor" stroke-width="0.8" fill="none" />
+        <text x={R + 88} y="-8" transform={`rotate(90 ${R + 88} -8)`} text-anchor="middle">Ø {(R + 10) * 2} · z = {big.teeth}</text>
+        <text x={EX.key[0] - 30} y={EX.key[1] - 64}>A — EXPLODED VIEW</text>
+      </g>
+
+      <!-- Machined-steel glint (appears as the parts become metal) -->
+      <rect class="gs__glint" x="-560" y="-440" width="1120" height="900" fill="url(#v4-glint)" mask="url(#v4-gear-mask)" />
+    </svg>
+  </div>
+  <div class="gs__vrack" data-gs-vrack></div>
+</div>
+
+<style>
+  .gs { --draw: 1; --mat: 1; position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
+  .gs__train {
+    --x: 74; --y: 46; --s: 1; --o: 1; --rack: 1;
+    position: absolute; left: 0; top: 0;
+    width: min(150vw, 1100px); aspect-ratio: 1120 / 900;
+    transform: translate(calc(var(--x) * 1vw - 50%), calc(var(--y) * 1vh - 49%)) scale(var(--s));
+    opacity: var(--o); color: var(--blue-hi); will-change: transform, opacity;
+    transition: color 0.6s var(--ease);
+  }
+  @media (min-width: 1024px) { .gs__train { width: min(92vw, 1180px); } }
+  .gs[data-tone='paper'] .gs__train { color: var(--blue-lo); }
+  .gs__svg { width: 100%; height: 100%; overflow: visible; }
+
+  /* 1. Design: CAD pen draws every outline */
+  .dr { stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--draw)); }
+  .gs__fade, .gs__ticks { opacity: calc(var(--draw) * (0.35 + var(--mat) * 0.65)); }
+
+  /* 2. Make: wireframe → machined steel */
+  .gs__body { fill: url(#v4-body); fill-opacity: var(--mat); }
+  .gs__hub { fill: currentColor; fill-opacity: calc(var(--mat) * 0.06); }
+  .gs__key { fill: currentColor; fill-opacity: calc(0.15 + var(--mat) * 0.25); }
+  .gs__glint { opacity: calc(var(--mat) * var(--mat)); }
+  .gs__axis { opacity: calc(var(--draw) * (1 - var(--mat)) * 0.8); }
+  .gs__notes { opacity: calc(var(--draw) * (1 - var(--mat))); }
+  @media (max-width: 1023px) { .gs__notes { display: none; } }
+  .gs__flash { opacity: 0; }
+  .gs.is-locked .gs__flash { animation: lock 0.9s var(--ease) both; }
+  @keyframes lock { 0% { opacity: 0; transform: scale(0.6); } 25% { opacity: 1; } 100% { opacity: 0; transform: scale(1.25); } }
+  .gs__flash { transform-box: fill-box; transform-origin: center; }
+
+  .gs__rack { opacity: calc(var(--rack) * 0.55 * var(--draw)); }
+  .gs[data-tone='paper'] .gs__glint { opacity: 0.4; }
+
+  .gs__vrack {
+    --pitch: 30px; --off: 0px; --vo: 0;
+    position: absolute; top: 0; bottom: 0; right: 0; width: 14px; opacity: var(--vo);
+    color: var(--blue-hi); display: none;
+    background:
+      linear-gradient(currentColor, currentColor) right 9px top 0 / 1px 100% no-repeat,
+      repeating-linear-gradient(180deg, transparent 0, transparent calc(var(--pitch) * 0.5), currentColor calc(var(--pitch) * 0.5), currentColor calc(var(--pitch) * 0.5 + 1px), transparent calc(var(--pitch) * 0.5 + 1px), transparent var(--pitch)) right 9px top var(--off) / 6px 100% repeat-y;
+    mask-image: linear-gradient(transparent, #000 15%, #000 85%, transparent);
+  }
+  @media (min-width: 1024px) { .gs__vrack { display: block; } }
+  .gs[data-tone='paper'] .gs__vrack { color: var(--blue-lo); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gs { --draw: 1 !important; --mat: 1 !important; }
+  }
+</style>

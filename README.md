@@ -10,6 +10,7 @@ Mobile-first, lead-focused website for **Alfa Triton Engineering** (Alfa Triton 
 | URL | Design | Notes |
 |---|---|---|
 | `/` | **V3** (live default): full-page gear, time-aware calls, early proof, no duplicates | Clean: no design switcher. `/v3/` redirects here |
+| `/v4/` | **V3 + "design → make → run" gear**: drafted on load, exploded parts assemble as you scroll the hero, then roll and dock | Candidate; `<LayoutV3 gear="assembly">` |
 | `/v1/` | **V1**: detailed, multi-section | Kept for comparison, `noindex` |
 | `/v2/` | **V2**: "machined graphite", rolling gear in the first three sections | Kept for comparison, `noindex` |
 
