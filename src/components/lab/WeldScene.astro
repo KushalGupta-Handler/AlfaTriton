@@ -1,0 +1,196 @@
+---
+/**
+ * Scroll-driven TIG welding scene.
+ * The section is tall; its inner stage is sticky. Scroll progress (0→1) drives:
+ *   0.00–0.14  fit-up: plates close the gap, three tacks appear
+ *   0.14–0.20  torch comes in and strikes the arc
+ *   0.20–0.90  torch travels the seam, filler rod dabs, bead ripples are laid
+ *   0.90–1.00  torch lifts away, the bead cools to steel
+ * The arc and sparks only run while you are actually scrolling (scripts/weld.ts).
+ */
+const X0 = 170;
+const X1 = 1030;
+const SEAM = 430;
+const STEP = 7;
+const ripples = Array.from({ length: Math.floor((X1 - X0) / STEP) + 1 }, (_, i) => X0 + i * STEP);
+const tacks = [210, 600, 990];
+const stages = [
+  { k: '01', t: 'Fit-up & tack', d: 'Plates are squared, gapped and tacked so nothing moves under heat.' },
+  { k: '02', t: 'Strike the arc', d: 'A tungsten electrode starts a clean, stable TIG arc.' },
+  { k: '03', t: 'Run the bead', d: 'Steady travel, filler added in rhythm — a consistent "stack of dimes".' },
+  { k: '04', t: 'Cool & check', d: 'The weld cools to a clean, even bead, ready for inspection.' },
+];
+---
+<section class="weld" data-weld aria-label="TIG welding, shown step by step as you scroll">
+  <div class="weld__stage">
+    <div class="weld__copy wrap">
+      <p class="label"><b>/</b> Welding, in action</p>
+      <ol class="weld__steps" role="list">
+        {stages.map((s, i) => (
+          <li data-step={i} class:list={{ on: i === 0 }}>
+            <span class="weld__k">{s.k}</span>
+            <span><strong>{s.t}</strong><span class="weld__d">{s.d}</span></span>
+          </li>
+        ))}
+      </ol>
+    </div>
+
+    <div class="weld__viz">
+      <svg class="weld__svg" viewBox="60 170 860 470" preserveAspectRatio="xMidYMid meet" data-weld-svg role="img" aria-label="Animated TIG weld along a butt joint between two stainless plates">
+        <defs>
+          <linearGradient id="w-plate" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#2a3138" />
+            <stop offset="1" stop-color="#1a1f24" />
+          </linearGradient>
+          <linearGradient id="w-plate-lo" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#232a30" />
+            <stop offset="1" stop-color="#161a1e" />
+          </linearGradient>
+          <linearGradient id="w-sheen" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#fff" stop-opacity="0" />
+            <stop offset="0.5" stop-color="#fff" stop-opacity="0.06" />
+            <stop offset="1" stop-color="#fff" stop-opacity="0" />
+          </linearGradient>
+          <radialGradient id="w-arc">
+            <stop offset="0" stop-color="#ffffff" />
+            <stop offset="0.18" stop-color="#e9fbff" />
+            <stop offset="0.45" stop-color="#7fd8ff" stop-opacity="0.55" />
+            <stop offset="1" stop-color="#1b9fd9" stop-opacity="0" />
+          </radialGradient>
+          <radialGradient id="w-heat">
+            <stop offset="0" stop-color="#ff9a3c" stop-opacity="0.55" />
+            <stop offset="0.5" stop-color="#ff5a1f" stop-opacity="0.18" />
+            <stop offset="1" stop-color="#ff5a1f" stop-opacity="0" />
+          </radialGradient>
+          <radialGradient id="w-room">
+            <stop offset="0" stop-color="#9fe2ff" stop-opacity="0.22" />
+            <stop offset="1" stop-color="#1b9fd9" stop-opacity="0" />
+          </radialGradient>
+        </defs>
+
+        <!-- Arc light bouncing off the scene -->
+        <circle data-room cx={X0} cy={SEAM} r="520" fill="url(#w-room)" opacity="0" />
+
+        <!-- Workpiece: two plates, butt joint along the seam -->
+        <g data-plate-top>
+          <polygon points={`170,318 1030,318 1070,${SEAM - 2} 130,${SEAM - 2}`} fill="url(#w-plate)" stroke="currentColor" stroke-width="1.2" />
+          <polygon points={`170,318 1030,318 1070,${SEAM - 2} 130,${SEAM - 2}`} fill="url(#w-sheen)" />
+          {[360, 520, 680, 840].map((x) => <path d={`M${x} 330 l-6 80`} stroke="currentColor" stroke-opacity="0.12" />)}
+        </g>
+        <g data-plate-bot>
+          <polygon points={`130,${SEAM + 2} 1070,${SEAM + 2} 1092,540 108,540`} fill="url(#w-plate-lo)" stroke="currentColor" stroke-width="1.2" />
+          <polygon points="108,540 1092,540 1092,566 108,566" fill="#101316" stroke="currentColor" stroke-width="1.2" />
+        </g>
+
+        <!-- Heat tint (stays after cooling, like real stainless) + bead ripples -->
+        <g data-tint>
+          {ripples.map((x) => <ellipse cx={x} cy={SEAM} rx="11" ry="26" opacity="0" />)}
+        </g>
+        <g data-tint-in>
+          {ripples.map((x) => <ellipse cx={x} cy={SEAM} rx="9" ry="16" opacity="0" />)}
+        </g>
+        <g data-bead>
+          {ripples.map((x) => (
+            <g opacity="0">
+              <ellipse cx={x} cy={SEAM} rx="8.5" ry="8.5" />
+              <path d={`M${x - 3} ${SEAM - 7} q 8 7 0 14`} fill="none" stroke="#000" stroke-opacity="0.28" stroke-width="1.2" />
+            </g>
+          ))}
+        </g>
+        <g data-tacks>
+          {tacks.map((x) => <ellipse cx={x} cy={SEAM} rx="7" ry="6" fill="#aab3bb" stroke="#000" stroke-opacity="0.3" opacity="0" />)}
+        </g>
+
+        <!-- Heat glow on the plate under the arc -->
+        <ellipse data-heat cx={X0} cy={SEAM + 2} rx="110" ry="38" fill="url(#w-heat)" opacity="0" />
+
+        <!-- Filler rod (dabs into the leading edge of the puddle) -->
+        <g data-rod>
+          <line data-rod-line x1="-250" y1="-150" x2="-16" y2="-6" stroke="#c7ced4" stroke-width="3.5" stroke-linecap="round" />
+          <circle data-rod-tip cx="-16" cy="-6" r="2.6" fill="#ffd36b" opacity="0" />
+        </g>
+
+        <!-- TIG torch -->
+        <g data-torch>
+          <g transform="rotate(-16)">
+            <line x1="0" y1="-3" x2="0" y2="-24" stroke="#d9dee3" stroke-width="2.4" />
+            <polygon points="-12,-22 12,-22 19,-66 -19,-66" fill="#3a2a24" stroke="currentColor" stroke-width="1.2" />
+            <path d="M-12 -30 H12 M-14 -42 H14 M-16 -54 H16" stroke="currentColor" stroke-opacity="0.25" />
+            <rect x="-17" y="-114" width="34" height="50" rx="5" fill="#1d2329" stroke="currentColor" stroke-width="1.2" />
+            <rect x="-10" y="-160" width="20" height="48" rx="9" fill="#151a1f" stroke="currentColor" stroke-width="1.2" />
+            <g transform="translate(14 -92) rotate(-52)">
+              <rect x="0" y="-13" width="160" height="26" rx="13" fill="#151a1f" stroke="currentColor" stroke-width="1.2" />
+              {[30, 46, 62, 78, 94, 110, 126].map((x) => <path d={`M${x} -12 V12`} stroke="currentColor" stroke-opacity="0.3" />)}
+            </g>
+            <path d="M118 -220 C 170 -290 250 -320 420 -440" stroke="currentColor" stroke-width="7" stroke-opacity="0.35" fill="none" stroke-linecap="round" />
+          </g>
+          <!-- Arc -->
+          <circle data-arc cx="0" cy="-1" r="46" fill="url(#w-arc)" opacity="0" />
+          <circle data-arc-core cx="0" cy="-1" r="6" fill="#fff" opacity="0" />
+        </g>
+
+        <!-- Sparks pool -->
+        <g data-sparks stroke-linecap="round">
+          {Array.from({ length: 34 }).map(() => <line x1="0" y1="0" x2="0" y2="0" stroke="#ffc062" stroke-width="2" opacity="0" />)}
+        </g>
+      </svg>
+
+      <div class="weld__hud" aria-hidden="true">
+        <span>TIG · STAINLESS</span>
+        <span class="weld__arc"><i data-arc-dot></i> ARC <b data-arc-state>OFF</b></span>
+        <span>SEAM <b data-seam>000</b> / 430 mm</span>
+      </div>
+      <div class="weld__bar" aria-hidden="true"><span data-weld-bar></span></div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .weld { position: relative; height: 340vh; }
+  .weld__stage {
+    position: sticky; top: 0; height: 100svh; overflow: hidden;
+    display: grid; grid-template-rows: auto 1fr; padding-top: calc(var(--header-h) + 8px);
+    background: radial-gradient(90% 70% at 60% 60%, #12171c 0%, var(--bg) 70%);
+  }
+  @media (min-width: 1024px) {
+    .weld__stage { grid-template-rows: 1fr; grid-template-columns: minmax(320px, 0.8fr) 2fr; align-items: center; padding-top: var(--header-h); }
+    .weld__copy { padding-right: 0; }
+  }
+  .weld__copy .label { margin-bottom: 14px; }
+  .weld__steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+  .weld__steps li {
+    display: grid; grid-template-columns: 34px 1fr; gap: 10px; padding: 8px 0;
+    opacity: 0.32; transition: opacity 0.4s var(--ease);
+  }
+  .weld__steps li.on { opacity: 1; }
+  .weld__k { font-family: var(--f-mono); font-size: 0.75rem; color: var(--blue-hi); padding-top: 4px; }
+  .weld__steps strong { display: block; font-family: var(--f-display); font-weight: 600; font-size: 1.25rem; letter-spacing: -0.02em; }
+  .weld__d { display: block; color: var(--fg-2); font-size: 0.9rem; max-height: 0; overflow: hidden; transition: max-height 0.5s var(--ease); }
+  .weld__steps li.on .weld__d { max-height: 4.5em; }
+  @media (max-width: 1023px) {
+    .weld__steps li:not(.on) { display: none; }
+    .weld__d { max-height: none; }
+  }
+
+  .weld__viz { position: relative; min-height: 0; display: grid; align-content: center; }
+  .weld__svg { width: 100%; height: 100%; max-height: 82svh; color: var(--blue-hi); overflow: visible; }
+  .weld__hud {
+    position: absolute; left: var(--gutter); right: var(--gutter); bottom: 28px;
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px;
+    font: 500 0.7rem/1.4 var(--f-mono); letter-spacing: 0.06em; color: var(--fg-3);
+  }
+  .weld__hud b { color: var(--fg); font-weight: 500; font-variant-numeric: tabular-nums; }
+  .weld__arc { display: inline-flex; align-items: center; gap: 6px; }
+  .weld__arc i { width: 7px; height: 7px; border-radius: 50%; background: var(--fg-3); transition: background 0.2s, box-shadow 0.2s; }
+  .weld__arc.on i { background: #9fe7ff; box-shadow: 0 0 10px #9fe7ff; }
+  .weld__arc.on b { color: #9fe7ff; }
+  .weld__bar { position: absolute; left: var(--gutter); right: var(--gutter); bottom: 16px; height: 2px; background: var(--line); }
+  .weld__bar span { display: block; height: 100%; background: linear-gradient(90deg, #ff8a2b, #ffd36b); transform-origin: left; transform: scaleX(0); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .weld { height: auto; }
+    .weld__stage { position: relative; height: auto; min-height: 100svh; }
+    .weld__steps li { opacity: 1; }
+    .weld__d { max-height: none; }
+  }
+</style>

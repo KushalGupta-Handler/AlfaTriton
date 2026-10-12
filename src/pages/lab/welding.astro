@@ -1,0 +1,37 @@
+---
+import LayoutV3 from '../../layouts/LayoutV3.astro';
+import WeldScene from '../../components/lab/WeldScene.astro';
+import Icon from '../../components/Icon.astro';
+---
+<LayoutV3 title="Welding in action | Alfa Triton Engineering" description="A scroll-driven look at a TIG weld on stainless steel, from fit-up to finished bead." gear="none" review={false}>
+  <section class="sec lab-intro">
+    <div class="wrap">
+      <p class="label"><b>/</b> Lab · scroll experiment</p>
+      <h1 class="split in"><span><span>Watch a weld</span></span><span><span class="hl">happen.</span></span></h1>
+      <p class="lede">Scroll to run the torch along the seam. Stop scrolling and the arc pauses.</p>
+      <p class="lab-hint" aria-hidden="true">Scroll ↓</p>
+    </div>
+  </section>
+
+  <WeldScene />
+
+  <section class="sec lab-outro">
+    <div class="wrap">
+      <h2 class="split in"><span><span>Need it welded?</span></span><span><span class="hl">We'll come to you.</span></span></h2>
+      <p class="lede">TIG and MIG on stainless, aluminium and mild steel — in our Clyde workshop or on site at your plant.</p>
+      <div class="b-row">
+        <a class="b" href="/#quote">Get a quote <Icon name="arrow" /></a>
+        <a class="b b--line" href="/">Back to homepage</a>
+      </div>
+    </div>
+  </section>
+</LayoutV3>
+
+<script>import '../../scripts/weld';</script>
+
+<style>
+  .lab-intro { padding-top: calc(var(--header-h) + 64px); min-height: 70svh; display: flex; align-items: flex-end; }
+  .lab-intro h1 { font-size: clamp(2.8rem, 11vw, 6.6rem); letter-spacing: -0.045em; line-height: 0.95; }
+  .lab-hint { font-family: var(--f-mono); font-size: 0.75rem; letter-spacing: 0.1em; color: var(--fg-3); margin-top: 32px; }
+  .lab-outro { border-top: 1px solid var(--line); }
+</style>

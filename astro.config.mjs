@@ -8,7 +8,7 @@ export default defineConfig({
   trailingSlash: 'ignore',
   integrations: [
     sitemap({
-      filter: (page) => !/\/(thank-you|404)\/?$/.test(page),
+      filter: (page) => !/\/(thank-you|404)\/?$/.test(page) && !page.includes('/lab/'),
     }),
   ],
   build: { inlineStylesheets: 'auto' },

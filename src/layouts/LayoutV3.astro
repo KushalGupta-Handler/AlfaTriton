@@ -10,7 +10,7 @@ import GearStageV4 from '../components/v3/GearStageV4.astro';
 import VersionSwitch from '../components/VersionSwitch.astro';
 import { site, faqs } from '../data/site';
 
-interface Props { title?: string; description?: string; review?: boolean; gear?: 'roll' | 'assembly'; version?: 'v3' | 'v4' }
+interface Props { title?: string; description?: string; review?: boolean; gear?: 'roll' | 'assembly' | 'none'; version?: 'v3' | 'v4' }
 const {
   title = `${site.name} | Precision Engineering & 24/7 Breakdown Repairs, Sydney`,
   description = site.description,
@@ -57,7 +57,7 @@ const jsonLd = JSON.stringify({
   </head>
   <body>
     <HeaderV3 />
-    {gear === 'assembly' ? <GearStageV4 /> : <GearStageV3 />}
+    {gear === 'assembly' ? <GearStageV4 /> : gear === 'roll' ? <GearStageV3 /> : null}
     <main id="main"><slot /></main>
     <FooterV3 review={review} />
     {review && <VersionSwitch current={version} />}
