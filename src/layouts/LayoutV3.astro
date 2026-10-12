@@ -7,10 +7,11 @@ import HeaderV3 from '../components/v3/HeaderV3.astro';
 import FooterV3 from '../components/v3/FooterV3.astro';
 import GearStageV3 from '../components/v3/GearStageV3.astro';
 import GearStageV4 from '../components/v3/GearStageV4.astro';
+import WeldStage from '../components/v3/WeldStage.astro';
 import VersionSwitch from '../components/VersionSwitch.astro';
 import { site, faqs } from '../data/site';
 
-interface Props { title?: string; description?: string; review?: boolean; gear?: 'roll' | 'assembly' | 'none'; version?: 'v3' | 'v4' }
+interface Props { title?: string; description?: string; review?: boolean; gear?: 'roll' | 'assembly' | 'weld' | 'none'; version?: 'v3' | 'v4' | 'v5' }
 const {
   title = `${site.name} | Precision Engineering & 24/7 Breakdown Repairs, Sydney`,
   description = site.description,
@@ -57,7 +58,7 @@ const jsonLd = JSON.stringify({
   </head>
   <body>
     <HeaderV3 />
-    {gear === 'assembly' ? <GearStageV4 /> : gear === 'roll' ? <GearStageV3 /> : null}
+    {gear === 'assembly' ? <GearStageV4 /> : gear === 'roll' ? <GearStageV3 /> : gear === 'weld' ? <WeldStage /> : null}
     <main id="main"><slot /></main>
     <FooterV3 review={review} />
     {review && <VersionSwitch current={version} />}

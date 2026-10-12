@@ -11,6 +11,8 @@ Mobile-first, lead-focused website for **Alfa Triton Engineering** (Alfa Triton 
 |---|---|---|
 | `/` | **V3** (live default): full-page gear, time-aware calls, early proof, no duplicates | Clean: no design switcher. `/v3/` redirects here |
 | `/v4/` | **V3 + "design → make → run" gear**: drafted on load, exploded parts assemble as you scroll the hero, then roll and dock | Candidate; `<LayoutV3 gear="assembly">` |
+| `/v5/` | **V3 + "the page is the workpiece" weld**: TIG torch in the hero, then docked at the right edge, welding a seam down the page as you scroll | Candidate; `<LayoutV3 gear="weld">`, engine `src/scripts/weld-stage.ts` |
+| `/lab/welding/` | Standalone pinned welding scene (fit-up → arc → bead → cool) | Lab, not in the sitemap |
 | `/v1/` | **V1**: detailed, multi-section | Kept for comparison, `noindex` |
 | `/v2/` | **V2**: "machined graphite", rolling gear in the first three sections | Kept for comparison, `noindex` |
 

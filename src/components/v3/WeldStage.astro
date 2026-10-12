@@ -1,0 +1,168 @@
+---
+/**
+ * V5 "the page is the workpiece".
+ * Two layers, both above section backgrounds and below content (.wrap is z 2):
+ *  - [data-wseam]  document-space strip down the right edge: the joint, the
+ *                  heat tint and the bead. It scrolls with the page, so the weld
+ *                  you've laid moves up and away as you read.
+ *  - [data-ws]     fixed layer: the TIG torch rig + arc + sparks. Big in the hero,
+ *                  then pulled to the right edge where it welds as you scroll.
+ * Engine: src/scripts/weld-stage.ts
+ */
+---
+<div class="wseam" aria-hidden="true" data-wseam>
+  <div class="wseam__joint"></div>
+  <div class="wseam__tint" data-wseam-tint></div>
+  <div class="wseam__bead" data-wseam-bead></div>
+  <div class="wseam__hot" data-wseam-hot></div>
+</div>
+
+<div class="ws" aria-hidden="true" data-ws>
+  <div class="ws__rig" data-ws-rig>
+    <svg class="ws__svg" viewBox="-260 -320 520 640" fill="none">
+      <defs>
+        <linearGradient id="ws-plate-l" x1="1" y1="0" x2="0" y2="0">
+          <stop offset="0" stop-color="#3a444d" /><stop offset="0.6" stop-color="#232a30" /><stop offset="1" stop-color="#171b20" stop-opacity="0" />
+        </linearGradient>
+        <linearGradient id="ws-plate-r" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#343d45" /><stop offset="0.6" stop-color="#20262c" /><stop offset="1" stop-color="#171b20" stop-opacity="0" />
+        </linearGradient>
+        <linearGradient id="ws-hero-bead" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#9aa4ad" stop-opacity="0" />
+          <stop offset="0.35" stop-color="#9aa4ad" />
+          <stop offset="0.62" stop-color="#7a2c1c" />
+          <stop offset="0.8" stop-color="#ff6a2a" />
+          <stop offset="0.93" stop-color="#ffd36b" />
+          <stop offset="1" stop-color="#fffbe8" />
+        </linearGradient>
+        <linearGradient id="ws-hero-tint" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#7c5aa8" stop-opacity="0" />
+          <stop offset="0.25" stop-color="#4a64b0" stop-opacity="0.45" />
+          <stop offset="0.42" stop-color="#c9a24e" stop-opacity="0.55" />
+          <stop offset="0.58" stop-color="#c9a24e" stop-opacity="0.55" />
+          <stop offset="0.75" stop-color="#4a64b0" stop-opacity="0.45" />
+          <stop offset="1" stop-color="#7c5aa8" stop-opacity="0" />
+        </linearGradient>
+        <radialGradient id="ws-arc">
+          <stop offset="0" stop-color="#ffffff" />
+          <stop offset="0.18" stop-color="#e9fbff" />
+          <stop offset="0.45" stop-color="#7fd8ff" stop-opacity="0.5" />
+          <stop offset="1" stop-color="#1b9fd9" stop-opacity="0" />
+        </radialGradient>
+        <radialGradient id="ws-heat">
+          <stop offset="0" stop-color="#ff9a3c" stop-opacity="0.5" />
+          <stop offset="0.55" stop-color="#ff5a1f" stop-opacity="0.14" />
+          <stop offset="1" stop-color="#ff5a1f" stop-opacity="0" />
+        </radialGradient>
+        <radialGradient id="ws-room">
+          <stop offset="0" stop-color="#9fe2ff" stop-opacity="0.2" />
+          <stop offset="1" stop-color="#1b9fd9" stop-opacity="0" />
+        </radialGradient>
+        <linearGradient id="ws-fade" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#fff" stop-opacity="0" />
+          <stop offset="0.25" stop-color="#fff" />
+          <stop offset="0.8" stop-color="#fff" />
+          <stop offset="1" stop-color="#fff" stop-opacity="0" />
+        </linearGradient>
+        <pattern id="ws-rip" width="22" height="8" patternUnits="userSpaceOnUse" x="-11" y="0">
+          <path d="M1 0 Q11 7 21 0" stroke="#000" stroke-opacity="0.3" stroke-width="1.2" fill="none" />
+        </pattern>
+        <mask id="ws-hero-mask" maskUnits="userSpaceOnUse" x="-260" y="-320" width="520" height="640">
+          <rect x="-260" y="-320" width="520" height="640" fill="url(#ws-fade)" />
+        </mask>
+      </defs>
+
+      <!-- Hero-only: the two plates and the run of bead above the torch -->
+      <g class="ws__hero" mask="url(#ws-hero-mask)">
+        <rect x="-230" y="-320" width="226" height="640" fill="url(#ws-plate-l)" />
+        <rect x="4" y="-320" width="226" height="640" fill="url(#ws-plate-r)" />
+        <path d="M-6 -320 V320 M6 -320 V320" stroke="currentColor" stroke-width="1.2" stroke-opacity="0.7" />
+        <path d="M-230 -320 V320 M230 -320 V320" stroke="currentColor" stroke-width="1" stroke-opacity="0.25" />
+        <rect x="-40" y="-320" width="80" height="320" fill="url(#ws-hero-tint)" />
+        <rect x="-11" y="-320" width="22" height="322" rx="11" fill="url(#ws-hero-bead)" />
+        <rect x="-11" y="-320" width="22" height="322" rx="11" fill="url(#ws-rip)" />
+      </g>
+
+      <!-- Light on the work -->
+      <circle data-ws-room r="260" fill="url(#ws-room)" opacity="0" />
+      <ellipse data-ws-heat rx="40" ry="90" cy="-20" fill="url(#ws-heat)" opacity="0" />
+
+      <!-- Filler rod (from the upper left, dabbing into the pool) -->
+      <g data-ws-rod>
+        <line data-ws-rod-line x1="-210" y1="-190" x2="-9" y2="-5" stroke="#c7ced4" stroke-width="3.2" stroke-linecap="round" />
+      </g>
+
+      <!-- TIG torch, coming in from the right, tip at (0,0) -->
+      <g transform="rotate(38)">
+        <line x1="0" y1="-3" x2="0" y2="-24" stroke="#d9dee3" stroke-width="2.4" />
+        <polygon points="-12,-22 12,-22 19,-66 -19,-66" fill="#3a2a24" stroke="currentColor" stroke-width="1.2" />
+        <path d="M-12 -30 H12 M-14 -42 H14 M-16 -54 H16" stroke="currentColor" stroke-opacity="0.25" />
+        <rect x="-17" y="-114" width="34" height="50" rx="5" fill="#1d2329" stroke="currentColor" stroke-width="1.2" />
+        <rect x="-10" y="-160" width="20" height="48" rx="9" fill="#151a1f" stroke="currentColor" stroke-width="1.2" />
+        <g transform="translate(14 -92) rotate(-52)">
+          <rect x="0" y="-13" width="160" height="26" rx="13" fill="#151a1f" stroke="currentColor" stroke-width="1.2" />
+          {[30, 46, 62, 78, 94, 110, 126].map((x) => <path d={`M${x} -12 V12`} stroke="currentColor" stroke-opacity="0.3" />)}
+        </g>
+        <path d="M118 -220 C 170 -290 250 -320 420 -440" stroke="currentColor" stroke-width="7" stroke-opacity="0.35" stroke-linecap="round" />
+      </g>
+
+      <!-- Arc -->
+      <circle data-ws-arc r="44" fill="url(#ws-arc)" opacity="0" />
+      <circle data-ws-core r="5.5" fill="#fff" opacity="0" />
+    </svg>
+  </div>
+  <svg class="ws__sparks" data-ws-sparks aria-hidden="true">
+    {Array.from({ length: 30 }).map(() => <line x1="0" y1="0" x2="0" y2="0" stroke="#ffc062" stroke-width="1.6" stroke-linecap="round" opacity="0" />)}
+  </svg>
+</div>
+
+<script>import '../../scripts/weld-stage';</script>
+
+<style>
+  :global(body) { position: relative; }
+
+  /* ---- Document-space seam (scrolls with the page) ---- */
+  .wseam {
+    --seam-right: 18px; --start: 0px; --laid: 0px; --heat: 0;
+    position: absolute; top: 0; right: var(--seam-right); width: 0; height: var(--doc-h, 100%);
+    z-index: 1; pointer-events: none;
+  }
+  @media (min-width: 1024px) { .wseam { --seam-right: 46px; } }
+  @media (max-width: 1023px) { .wseam { opacity: 0.75; } .wseam__bead { left: -4px; width: 8px; background-size: 8px 5px, auto; } .wseam__hot { left: -5px; width: 10px; } .wseam__tint { left: -16px; width: 32px; } }
+  .wseam__joint {
+    position: absolute; top: var(--start); bottom: 0; left: -4px; width: 8px;
+    border-left: 1px solid rgba(72, 193, 240, 0.22); border-right: 1px solid rgba(72, 193, 240, 0.22);
+    mask-image: linear-gradient(transparent, #000 120px);
+  }
+  .wseam__tint {
+    position: absolute; top: var(--start); height: var(--laid); left: -24px; width: 48px;
+    background: linear-gradient(90deg, rgba(124,90,168,0) 0%, rgba(74,100,176,0.28) 22%, rgba(201,162,78,0.38) 40%, rgba(201,162,78,0.38) 60%, rgba(74,100,176,0.28) 78%, rgba(124,90,168,0) 100%);
+    mask-image: linear-gradient(transparent, #000 160px);
+  }
+  .wseam__bead {
+    position: absolute; top: var(--start); height: var(--laid); left: -6px; width: 12px; border-radius: 6px;
+    background:
+      radial-gradient(ellipse 7px 4px at 50% 0, rgba(0,0,0,0.32) 42%, transparent 60%) 0 0 / 12px 6px repeat-y,
+      linear-gradient(90deg, #7d8790, #b9c2ca 45%, #8e98a1);
+    mask-image: linear-gradient(transparent, #000 120px);
+  }
+  .wseam__hot {
+    position: absolute; top: calc(var(--start) + var(--laid) - 340px); height: 340px; left: -7px; width: 14px; border-radius: 7px;
+    background: linear-gradient(180deg, rgba(122,44,28,0) 0%, rgba(122,44,28,0.85) 30%, #ff6a2a 62%, #ffd36b 86%, #fffbe8 100%);
+    box-shadow: 0 0 18px 2px rgba(255, 120, 40, calc(var(--heat) * 0.55));
+    opacity: var(--heat);
+  }
+
+  /* ---- Fixed rig ---- */
+  .ws { position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
+  .ws__rig {
+    --x: 0px; --y: 0px; --s: 1; --o: 1; --hero: 1;
+    position: absolute; left: 0; top: 0; width: 520px; height: 640px;
+    transform-origin: 260px 320px;
+    transform: translate(calc(var(--x) - 260px), calc(var(--y) - 320px)) scale(var(--s));
+    opacity: var(--o); color: var(--blue-hi); will-change: transform, opacity;
+  }
+  .ws__svg { width: 100%; height: 100%; overflow: visible; }
+  .ws__hero { opacity: var(--hero); }
+  .ws__sparks { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+</style>

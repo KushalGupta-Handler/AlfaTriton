@@ -1,13 +1,14 @@
 ---
 // Review-only switch between design versions. Remove once a version is chosen.
 // Shown only near the top of the page so it never covers content while reading.
-interface Props { current: 'v1' | 'v2' | 'v3' | 'v4' }
+interface Props { current: 'v1' | 'v2' | 'v3' | 'v4' | 'v5' }
 const { current } = Astro.props;
 const versions = [
   { id: 'v1', href: '/v1/' },
   { id: 'v2', href: '/v2/' },
   { id: 'v3', href: '/' },
   { id: 'v4', href: '/v4/' },
+  { id: 'v5', href: '/v5/' },
 ];
 ---
 <nav class="vswitch" aria-label="Design version" data-vswitch>
